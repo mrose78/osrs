@@ -286,6 +286,81 @@
   /* CHART AREA */
   .chart-container { position: relative; height: 220px; margin: 10px 0; }
 
+  /* INLINE PRICE CHART (row expansion) */
+  .price-chart-row td {
+    padding: 0 !important;
+    border-bottom: 2px solid var(--border-gold) !important;
+    background: #0c0a07;
+  }
+  .price-chart-wrap {
+    padding: 12px 14px 14px;
+    animation: slideDown 0.18s ease;
+  }
+  @keyframes slideDown { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+  .price-chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .price-chart-title {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    color: var(--gold);
+    letter-spacing: 0.5px;
+  }
+  .price-chart-meta {
+    display: flex;
+    gap: 14px;
+    font-size: 12px;
+    flex-wrap: wrap;
+  }
+  .pcm-buy  { color: #4caf7a; }
+  .pcm-sell { color: #e8a020; }
+  .pcm-gap  { color: var(--text-dim); }
+  .price-chart-timestep {
+    display: flex;
+    gap: 4px;
+  }
+  .ts-btn {
+    padding: 3px 9px;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    color: var(--text-dim);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .ts-btn:hover { color: var(--gold); border-color: var(--border-gold); }
+  .ts-btn.active { color: var(--gold-light); background: rgba(201,162,39,0.12); border-color: var(--gold-dim); }
+  .price-chart-canvas-wrap { position: relative; height: 180px; }
+  .price-chart-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 180px;
+    color: var(--text-dim);
+    font-style: italic;
+    font-size: 13px;
+  }
+  .price-chart-legend {
+    display: flex;
+    gap: 16px;
+    margin-top: 6px;
+    font-size: 11px;
+  }
+  .pcl-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+  tr.item-row { cursor: pointer; }
+  tr.item-row:hover td { background: rgba(201,162,39,0.06) !important; }
+  tr.item-row.expanded td { background: rgba(201,162,39,0.04) !important; border-bottom: none !important; }
+  .expand-arrow { display: inline-block; transition: transform 0.2s; margin-left: 4px; font-size: 10px; color: var(--text-dim); }
+  .expand-arrow.open { transform: rotate(90deg); }
+
   /* CONSOLE */
   .console-wrap {
     background: #080806;
@@ -1073,11 +1148,11 @@ function renderFlip() {
   }
 
   tbody.innerHTML = data.slice(0, 100).map(f => `
-    <tr>
+    <tr class="item-row" id="row-${f.id}" onclick="toggleItemChart(${f.id}, this)">
       <td>
         <div style="display:flex;align-items:center;gap:5px">
           ${f.isF2P ? '<span title="F2P" style="font-size:10px;color:var(--green);font-family:Cinzel,serif;border:1px solid rgba(76,175,122,0.4);border-radius:2px;padding:1px 4px;flex-shrink:0">F2P</span>' : '<span style="font-size:10px;color:var(--text-dim);font-family:Cinzel,serif;border:1px solid var(--border);border-radius:2px;padding:1px 4px;flex-shrink:0">P2P</span>'}
-          <div class="item-name" title="${f.name}">${f.name}</div>
+          <div class="item-name" title="${f.name}">${f.name}<span class="expand-arrow" id="arrow-${f.id}">▶</span></div>
         </div>
       </td>
       <td>${fmtGP(f.buy)} <span class="gp">gp</span></td>
@@ -1089,6 +1164,304 @@ function renderFlip() {
       <td class="${f.gpDay > 1000000 ? 'profit-high' : f.gpDay > 100000 ? 'profit-mid' : 'profit-low'}">${fmtGP(f.gpDay)}</td>
     </tr>
   `).join('');
+}
+
+// ============================
+// INLINE PRICE CHART
+// ============================
+const inlineCharts = {};   // itemId -> Chart instance
+let expandedItemId = null;
+
+function toggleItemChart(itemId, rowEl) {
+  const existingRow = document.getElementById(`chart-row-${itemId}`);
+  const arrow = document.getElementById(`arrow-${itemId}`);
+
+  // Close any open chart first
+  if (expandedItemId && expandedItemId !== itemId) {
+    const oldRow = document.getElementById(`chart-row-${expandedItemId}`);
+    const oldArrow = document.getElementById(`arrow-${expandedItemId}`);
+    const oldItemRow = document.getElementById(`row-${expandedItemId}`);
+    if (oldRow) oldRow.remove();
+    if (oldArrow) { oldArrow.classList.remove('open'); }
+    if (oldItemRow) oldItemRow.classList.remove('expanded');
+    if (inlineCharts[expandedItemId]) { inlineCharts[expandedItemId].destroy(); delete inlineCharts[expandedItemId]; }
+    expandedItemId = null;
+  }
+
+  if (existingRow) {
+    // Toggle off
+    existingRow.remove();
+    arrow.classList.remove('open');
+    rowEl.classList.remove('expanded');
+    if (inlineCharts[itemId]) { inlineCharts[itemId].destroy(); delete inlineCharts[itemId]; }
+    expandedItemId = null;
+    return;
+  }
+
+  // Insert chart row after the clicked row
+  arrow.classList.add('open');
+  rowEl.classList.add('expanded');
+  expandedItemId = itemId;
+
+  const item = flipData.find(f => f.id === itemId);
+  const colCount = 8;
+  const chartRow = document.createElement('tr');
+  chartRow.id = `chart-row-${itemId}`;
+  chartRow.className = 'price-chart-row';
+  chartRow.innerHTML = `
+    <td colspan="${colCount}">
+      <div class="price-chart-wrap">
+        <div class="price-chart-header">
+          <div>
+            <div class="price-chart-title">${item ? item.name : 'Item '+ itemId} — Price History</div>
+            <div class="price-chart-legend">
+              <span><span class="pcl-dot" style="background:#e8a020"></span>Sell (insta-sell)</span>
+              <span><span class="pcl-dot" style="background:#4caf7a"></span>Buy (insta-buy)</span>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+            <div class="price-chart-timestep" id="ts-btns-${itemId}">
+              <button class="ts-btn" onclick="loadPriceChart(${itemId},'5m',this,event)">5m</button>
+              <button class="ts-btn" onclick="loadPriceChart(${itemId},'1h',this,event)">1h</button>
+              <button class="ts-btn active" onclick="loadPriceChart(${itemId},'6h',this,event)">6h</button>
+              <button class="ts-btn" onclick="loadPriceChart(${itemId},'24h',this,event)">24h</button>
+            </div>
+            <div class="price-chart-meta" id="meta-${itemId}">
+              <span class="pcm-gap">Loading...</span>
+            </div>
+          </div>
+        </div>
+        <div class="price-chart-canvas-wrap">
+          <div class="price-chart-loading" id="chart-loading-${itemId}">
+            <div class="spinner"></div> Fetching price history...
+          </div>
+          <canvas id="price-canvas-${itemId}" style="display:none"></canvas>
+        </div>
+      </div>
+    </td>
+  `;
+  rowEl.after(chartRow);
+  loadPriceChart(itemId, '6h', document.querySelector(`#ts-btns-${itemId} .ts-btn.active`));
+}
+
+async function loadPriceChart(itemId, timestep, btnEl, evt) {
+  if (evt) evt.stopPropagation();
+
+  // Update active button
+  const container = document.getElementById(`ts-btns-${itemId}`);
+  if (container) container.querySelectorAll('.ts-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+
+  const loadingEl = document.getElementById(`chart-loading-${itemId}`);
+  const canvasEl  = document.getElementById(`price-canvas-${itemId}`);
+  const metaEl    = document.getElementById(`meta-${itemId}`);
+
+  if (!canvasEl) return;
+
+  if (loadingEl) loadingEl.style.display = 'flex';
+  canvasEl.style.display = 'none';
+
+  // Destroy old chart instance if exists
+  if (inlineCharts[itemId]) { inlineCharts[itemId].destroy(); delete inlineCharts[itemId]; }
+
+  try {
+    const url = `${PROXY}/timeseries?timestep=${timestep}&id=${itemId}`;
+    log(`Fetching timeseries for item ${itemId} (${timestep})`, 'info');
+    const res = await fetch(url, { headers: { 'User-Agent': 'OSRS-GE-Tool/1.0' } });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    const series = json.data || [];
+    if (!series.length) throw new Error('No data returned');
+
+    // Filter to last 7 days
+    const sevenDaysAgo = (Date.now() / 1000) - (7 * 24 * 3600);
+    const filtered = series.filter(p => p.timestamp >= sevenDaysAgo);
+    const pts = filtered.length > 0 ? filtered : series.slice(-200);
+
+    const labels = pts.map(p => {
+      const d = new Date(p.timestamp * 1000);
+      return d.toLocaleDateString('en-GB', {month:'short',day:'numeric'}) + ' ' +
+             d.toLocaleTimeString('en-GB', {hour:'2-digit',minute:'2-digit'});
+    });
+    const highPrices = pts.map(p => p.avgHighPrice || null);
+    const lowPrices  = pts.map(p => p.avgLowPrice  || null);
+
+    // Compute meta stats
+    const validHigh = highPrices.filter(Boolean);
+    const validLow  = lowPrices.filter(Boolean);
+    const avgHigh = validHigh.length ? Math.round(validHigh.reduce((a,b)=>a+b,0)/validHigh.length) : null;
+    const avgLow  = validLow.length  ? Math.round(validLow.reduce((a,b)=>a+b,0)/validLow.length)  : null;
+    const minLow  = validLow.length  ? Math.min(...validLow)  : null;
+    const maxHigh = validHigh.length ? Math.max(...validHigh) : null;
+    const gap = avgHigh && avgLow ? avgHigh - avgLow : null;
+
+    if (metaEl) {
+      metaEl.innerHTML = `
+        <span class="pcm-buy">Buy avg: ${fmtGP(avgLow)} gp</span>
+        <span class="pcm-sell">Sell avg: ${fmtGP(avgHigh)} gp</span>
+        <span class="pcm-gap">Gap: ${fmtGP(gap)} gp</span>
+        <span style="color:var(--text-dim)">Low: ${fmtGP(minLow)} ↔ High: ${fmtGP(maxHigh)}</span>
+      `;
+    }
+
+    if (loadingEl) loadingEl.style.display = 'none';
+    canvasEl.style.display = 'block';
+
+    const ctx = canvasEl.getContext('2d');
+    inlineCharts[itemId] = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Sell price',
+            data: highPrices,
+            borderColor: '#e8a020',
+            backgroundColor: 'rgba(232,160,32,0.08)',
+            borderWidth: 1.5,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            tension: 0.2,
+            fill: false,
+            spanGaps: true,
+          },
+          {
+            label: 'Buy price',
+            data: lowPrices,
+            borderColor: '#4caf7a',
+            backgroundColor: 'rgba(76,175,122,0.08)',
+            borderWidth: 1.5,
+            pointRadius: 0,
+            pointHoverRadius: 4,
+            tension: 0.2,
+            fill: '+1',
+            spanGaps: true,
+          },
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(14,11,8,0.95)',
+            borderColor: '#3d3020',
+            borderWidth: 1,
+            titleColor: '#c9a227',
+            bodyColor: '#d4c5a9',
+            callbacks: {
+              title: items => items[0].label,
+              label: ctx => ` ${ctx.dataset.label}: ${fmtGP(ctx.raw)} gp`,
+              afterBody: items => {
+                const h = items.find(i => i.dataset.label === 'Sell price')?.raw;
+                const l = items.find(i => i.dataset.label === 'Buy price')?.raw;
+                if (h && l) return [` Margin: ${fmtGP(h - l)} gp`];
+                return [];
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            ticks: {
+              maxTicksLimit: 8,
+              maxRotation: 0,
+              font: { size: 10 },
+              color: '#7a6e5c',
+              callback: function(val, idx) {
+                const lbl = this.getLabelForValue(val);
+                return lbl ? lbl.split(' ').slice(0,2).join(' ') : '';
+              }
+            },
+            grid: { color: 'rgba(61,48,32,0.4)' }
+          },
+          y: {
+            ticks: { callback: v => fmtGP(v), color: '#7a6e5c', font: { size: 10 } },
+            grid: { color: 'rgba(61,48,32,0.4)' },
+          }
+        }
+      }
+    });
+    log(`Price chart loaded: ${pts.length} data points (${timestep})`, 'success');
+
+  } catch(e) {
+    log(`Price chart error for item ${itemId}: ${e.message}`, 'error');
+    if (loadingEl) loadingEl.innerHTML = `<span style="color:var(--red)">⚠ Could not load price history — ${e.message}</span>`;
+    // Show mock chart for demo
+    showMockPriceChart(itemId, canvasEl, loadingEl, metaEl);
+  }
+}
+
+function showMockPriceChart(itemId, canvasEl, loadingEl, metaEl) {
+  const item = flipData.find(f => f.id === itemId);
+  if (!item || !canvasEl) return;
+
+  const pts = 200;
+  const now = Date.now();
+  const baseHigh = item.sell || 1000;
+  const baseLow  = item.buy  || 800;
+  const volatility = (baseHigh - baseLow) * 0.8;
+
+  const labels = [], highs = [], lows = [];
+  for (let i = pts; i >= 0; i--) {
+    const t = new Date(now - i * 30 * 60 * 1000);
+    labels.push(t.toLocaleDateString('en-GB',{month:'short',day:'numeric'}) + ' ' + t.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}));
+    const noise = (Math.random() - 0.5) * volatility;
+    const trend = Math.sin(i / 25) * volatility * 0.3;
+    highs.push(Math.round(baseHigh + noise + trend));
+    lows.push(Math.round(baseLow  + noise * 0.7 + trend * 0.7));
+  }
+
+  if (loadingEl) loadingEl.style.display = 'none';
+  canvasEl.style.display = 'block';
+
+  if (metaEl) {
+    const avgH = Math.round(highs.reduce((a,b)=>a+b,0)/highs.length);
+    const avgL = Math.round(lows.reduce((a,b)=>a+b,0)/lows.length);
+    metaEl.innerHTML = `
+      <span class="pcm-buy">Buy avg: ${fmtGP(avgL)} gp</span>
+      <span class="pcm-sell">Sell avg: ${fmtGP(avgH)} gp</span>
+      <span class="pcm-gap">Gap: ${fmtGP(avgH-avgL)} gp</span>
+      <span style="color:var(--gold-dim);font-style:italic">★ demo data</span>
+    `;
+  }
+
+  const ctx = canvasEl.getContext('2d');
+  inlineCharts[itemId] = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        { label:'Sell price', data:highs, borderColor:'#e8a020', backgroundColor:'rgba(232,160,32,0.08)', borderWidth:1.5, pointRadius:0, pointHoverRadius:4, tension:0.3, fill:false, spanGaps:true },
+        { label:'Buy price',  data:lows,  borderColor:'#4caf7a', backgroundColor:'rgba(76,175,122,0.08)',  borderWidth:1.5, pointRadius:0, pointHoverRadius:4, tension:0.3, fill:'+1', spanGaps:true },
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'rgba(14,11,8,0.95)',borderColor:'#3d3020',borderWidth:1,
+          titleColor:'#c9a227',bodyColor:'#d4c5a9',
+          callbacks:{
+            label: ctx => ` ${ctx.dataset.label}: ${fmtGP(ctx.raw)} gp`,
+            afterBody: items => {
+              const h=items.find(i=>i.dataset.label==='Sell price')?.raw;
+              const l=items.find(i=>i.dataset.label==='Buy price')?.raw;
+              return h&&l ? [` Margin: ${fmtGP(h-l)} gp`] : [];
+            }
+          }
+        }
+      },
+      scales:{
+        x:{ticks:{maxTicksLimit:8,maxRotation:0,font:{size:10},color:'#7a6e5c',callback:function(v){const l=this.getLabelForValue(v);return l?l.split(' ').slice(0,2).join(' '):''}},grid:{color:'rgba(61,48,32,0.4)'}},
+        y:{ticks:{callback:v=>fmtGP(v),color:'#7a6e5c',font:{size:10}},grid:{color:'rgba(61,48,32,0.4)'}}
+      }
+    }
+  });
 }
 
 function renderGems() {
