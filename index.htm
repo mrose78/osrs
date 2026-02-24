@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OSRS GE Merchant</title>
+<link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Cinzel:wght@400;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --gold: #c9a227;
+    --gold-light: #e8c547;
+    --gold-dim: #7a6115;
+    --bg: #0e0b08;
+    --bg2: #16120d;
+    --bg3: #1e1810;
+    --panel: #1a150e;
+    --panel2: #221c13;
+    --border: #3d3020;
+    --border-gold: #4a3c1a;
+    --text: #d4c5a9;
+    --text-dim: #7a6e5c;
+    --text-bright: #f0e6cc;
+    --green: #4caf7a;
+    --red: #c0392b;
+    --blue: #4a9eca;
+    --cyan: #48c7c7;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 16px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Parchment texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(201,162,39,0.04) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(201,162,39,0.03) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 12px 40px; }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    padding: 28px 16px 16px;
+    position: relative;
+  }
+  header::after {
+    content: '';
+    display: block;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dim), var(--gold), var(--gold-dim), transparent);
+    margin-top: 16px;
+  }
+  .header-rune {
+    font-size: 11px;
+    letter-spacing: 6px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    font-family: 'Cinzel', serif;
+    margin-bottom: 6px;
+  }
+  h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(24px, 6vw, 48px);
+    font-weight: 700;
+    color: var(--gold-light);
+    letter-spacing: 2px;
+    text-shadow: 0 0 40px rgba(201,162,39,0.4), 0 2px 4px rgba(0,0,0,0.8);
+    line-height: 1.1;
+  }
+  .subtitle {
+    font-family: 'Crimson Pro', serif;
+    font-style: italic;
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-top: 4px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    margin: 20px 0 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px;
+  }
+  .tab {
+    flex: 1;
+    padding: 8px 4px;
+    font-family: 'Cinzel', serif;
+    font-size: clamp(10px, 2.5vw, 13px);
+    font-weight: 600;
+    color: var(--text-dim);
+    background: transparent;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.5px;
+  }
+  .tab:hover { color: var(--gold); background: rgba(201,162,39,0.05); }
+  .tab.active {
+    background: linear-gradient(135deg, #2a2010, #1e1810);
+    color: var(--gold-light);
+    border: 1px solid var(--border-gold);
+    box-shadow: inset 0 1px 0 rgba(201,162,39,0.15);
+  }
+
+  /* PANELS */
+  .panel {
+    background: linear-gradient(135deg, var(--panel), var(--panel2));
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(0,0,0,0.2);
+  }
+  .panel-icon { font-size: 16px; }
+  .panel-title {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .panel-body { padding: 14px; }
+
+  /* STATUS BAR */
+  .status-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 14px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--red);
+    transition: background 0.3s;
+    flex-shrink: 0;
+  }
+  .status-dot.connected { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .status-dot.loading { background: var(--gold); animation: pulse 1s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .status-text { font-size: 13px; color: var(--text-dim); flex: 1; }
+  .refresh-btn {
+    padding: 5px 12px;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--gold);
+    background: transparent;
+    border: 1px solid var(--border-gold);
+    border-radius: 3px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: all 0.2s;
+  }
+  .refresh-btn:hover { background: rgba(201,162,39,0.1); border-color: var(--gold); }
+  .refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .last-update { font-size: 11px; color: var(--text-dim); }
+
+  /* SECTIONS */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* TABLE */
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 10px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  th:hover { color: var(--gold); }
+  th.sorted { color: var(--gold-light); }
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(61,48,32,0.4);
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  tr:hover td { background: rgba(201,162,39,0.04); }
+  .item-name { color: var(--text-bright); font-size: 13px; max-width: 150px; overflow: hidden; text-overflow: ellipsis; }
+  .profit-high { color: var(--green); font-weight: 600; }
+  .profit-mid { color: var(--gold); }
+  .profit-low { color: var(--text-dim); }
+  .profit-neg { color: var(--red); }
+  .badge {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 2px;
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .badge-flip { background: rgba(74,158,202,0.2); color: var(--blue); border: 1px solid rgba(74,158,202,0.3); }
+  .badge-craft { background: rgba(76,175,122,0.2); color: var(--green); border: 1px solid rgba(76,175,122,0.3); }
+
+  /* GEMS GRID */
+  .gems-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .gem-card {
+    background: linear-gradient(135deg, var(--panel2), #1a1510);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .gem-card:hover { border-color: var(--border-gold); transform: translateY(-1px); }
+  .gem-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .gem-emoji { font-size: 24px; }
+  .gem-name { font-family: 'Cinzel', serif; font-size: 13px; color: var(--gold); font-weight: 600; }
+  .gem-card-body { padding: 10px 12px; }
+  .gem-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 13px;
+    border-bottom: 1px solid rgba(61,48,32,0.3);
+  }
+  .gem-row:last-child { border: none; }
+  .gem-label { color: var(--text-dim); }
+  .gem-val { color: var(--text-bright); font-weight: 600; }
+  .gem-profit-banner {
+    margin: 8px 0 0;
+    padding: 6px 10px;
+    background: rgba(76,175,122,0.1);
+    border: 1px solid rgba(76,175,122,0.2);
+    border-radius: 3px;
+    text-align: center;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    color: var(--green);
+  }
+  .gem-profit-banner.negative {
+    background: rgba(192,57,43,0.1);
+    border-color: rgba(192,57,43,0.2);
+    color: var(--red);
+  }
+
+  /* CHART AREA */
+  .chart-container { position: relative; height: 220px; margin: 10px 0; }
+
+  /* CONSOLE */
+  .console-wrap {
+    background: #080806;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    height: 240px;
+    overflow-y: auto;
+    padding: 10px;
+  }
+  .log-line { padding: 2px 0; display: flex; gap: 8px; }
+  .log-time { color: #444; flex-shrink: 0; }
+  .log-info { color: #7ab3c9; }
+  .log-success { color: #5ec48a; }
+  .log-warn { color: #d4a027; }
+  .log-error { color: #e05555; }
+  .log-data { color: #9a8060; }
+  .console-input-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .console-input {
+    flex: 1;
+    background: #080806;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text);
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    padding: 6px 10px;
+    outline: none;
+  }
+  .console-input:focus { border-color: var(--gold-dim); }
+  .console-btn {
+    padding: 6px 14px;
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    color: var(--gold);
+    background: transparent;
+    border: 1px solid var(--border-gold);
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  .console-btn:hover { background: rgba(201,162,39,0.1); }
+
+  /* FILTERS */
+  .filters {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+  }
+  .filter-input {
+    flex: 1;
+    min-width: 120px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text);
+    font-family: 'Crimson Pro', serif;
+    font-size: 14px;
+    padding: 6px 10px;
+    outline: none;
+  }
+  .filter-input:focus { border-color: var(--gold-dim); }
+  .filter-select {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--text);
+    font-family: 'Crimson Pro', serif;
+    font-size: 14px;
+    padding: 6px 10px;
+    outline: none;
+  }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .stat-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+    text-align: center;
+  }
+  .stat-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .stat-val {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--gold-light);
+  }
+  .stat-val.green { color: var(--green); }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+  /* LOADING */
+  .loading-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 40px;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+  .spinner {
+    width: 32px; height: 32px;
+    border: 2px solid var(--border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .empty { text-align: center; padding: 30px; color: var(--text-dim); font-style: italic; }
+  .gp { font-size: 11px; color: var(--text-dim); margin-left: 2px; }
+
+  /* MOBILE */
+  @media (max-width: 500px) {
+    .filters { flex-direction: column; }
+    .filter-select { width: 100%; }
+    td, th { padding: 6px 6px; }
+    .item-name { max-width: 100px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="header-rune">⚔ Grand Exchange Merchant ⚔</div>
+    <h1>OSRS Profit Oracle</h1>
+    <div class="subtitle">Real-time market intelligence for the discerning merchant</div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('flip')">⚖ Flip</button>
+    <button class="tab" onclick="switchTab('gems')">💎 Gems</button>
+    <button class="tab" onclick="switchTab('charts')">📈 Charts</button>
+    <button class="tab" onclick="switchTab('console')">⌨ Console</button>
+  </div>
+
+  <div class="status-bar">
+    <div class="status-dot" id="statusDot"></div>
+    <div class="status-text" id="statusText">Awaiting connection to the Grand Exchange...</div>
+    <div class="last-update" id="lastUpdate"></div>
+    <button class="refresh-btn" id="refreshBtn" onclick="loadAll()">⟳ Refresh</button>
+  </div>
+
+  <!-- FLIP TAB -->
+  <div class="section active" id="section-flip">
+    <div class="stats-row" id="flipStats"></div>
+    <div class="filters">
+      <input class="filter-input" id="searchFilter" placeholder="Search item..." oninput="renderFlip()">
+      <select class="filter-select" id="typeFilter" onchange="renderFlip()">
+        <option value="all">All Types</option>
+        <option value="flip">Flip Only</option>
+        <option value="craft">Craft Only</option>
+      </select>
+      <select class="filter-select" id="sortFilter" onchange="renderFlip()">
+        <option value="gpday">Sort: GP/Day ★</option>
+        <option value="profit">Sort: Profit/Flip</option>
+        <option value="margin">Sort: Margin%</option>
+        <option value="volume">Sort: Volume</option>
+      </select>
+      <button class="refresh-btn" id="f2pToggle" onclick="toggleF2P()" style="background:rgba(76,175,122,0.15);border-color:rgba(76,175,122,0.5);color:var(--green)">✓ F2P Only</button>
+    </div>
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-icon">📊</span>
+        <span class="panel-title">Market Opportunities</span>
+      </div>
+      <div class="panel-body" style="padding:0">
+        <div class="table-wrap">
+          <table id="flipTable">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th onclick="setSortFlip('buy')">Buy</th>
+                <th onclick="setSortFlip('sell')">Sell</th>
+                <th onclick="setSortFlip('profit')">Profit/Flip</th>
+                <th onclick="setSortFlip('margin')">Margin%</th>
+                <th>Buy Limit</th>
+                <th onclick="setSortFlip('volume')">Vol/Day</th>
+                <th onclick="setSortFlip('gpday')" style="color:var(--gold)">GP/Day ★</th>
+              </tr>
+            </thead>
+            <tbody id="flipBody">
+              <tr><td colspan="7"><div class="loading-overlay"><div class="spinner"></div><span>Consulting the Grand Exchange...</span></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GEMS TAB -->
+  <div class="section" id="section-gems">
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-header"><span class="panel-icon">ℹ</span><span class="panel-title">Gem Cutting Profits</span></div>
+      <div class="panel-body">
+        <p style="font-size:13px;color:var(--text-dim);font-style:italic">Profit from cutting uncut gems into their cut versions. Data pulled live from the OSRS GE API. Buy price includes 2% GE tax on sell side.</p>
+      </div>
+    </div>
+    <div class="gems-grid" id="gemsGrid">
+      <div class="loading-overlay" style="grid-column:1/-1"><div class="spinner"></div><span>Fetching gem prices...</span></div>
+    </div>
+  </div>
+
+  <!-- CHARTS TAB -->
+  <div class="section" id="section-charts">
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-header"><span class="panel-icon">📈</span><span class="panel-title">Top F2P Opportunities — GP/Day vs Profit/Flip</span></div>
+      <div class="panel-body">
+        <div class="chart-container"><canvas id="chartFlip"></canvas></div>
+      </div>
+    </div>
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-header"><span class="panel-icon">💎</span><span class="panel-title">Gem Crafting Profit Comparison</span></div>
+      <div class="panel-body">
+        <div class="chart-container"><canvas id="chartGems"></canvas></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><span class="panel-icon">📊</span><span class="panel-title">Margin % vs Volume</span></div>
+      <div class="panel-body">
+        <div class="chart-container"><canvas id="chartScatter"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONSOLE TAB -->
+  <div class="section" id="section-console">
+    <div class="panel">
+      <div class="panel-header"><span class="panel-icon">⌨</span><span class="panel-title">Debug Console</span></div>
+      <div class="panel-body">
+        <div class="console-wrap" id="consoleOutput"></div>
+        <div class="console-input-row">
+          <input class="console-input" id="consoleInputField" placeholder="Type command (help, reload, clear, status)..." onkeydown="if(event.key==='Enter')runConsoleCmd()">
+          <button class="console-btn" onclick="runConsoleCmd()">Run</button>
+          <button class="console-btn" onclick="clearConsole()">Clear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================
+// CONFIG & STATE
+// ============================
+const PROXY = 'https://prices.runescape.wiki/api/v1/osrs';
+const MAPPING_URL = `${PROXY}/mapping`;
+const LATEST_URL = `${PROXY}/latest`;
+const VOLUME_URL = `${PROXY}/volumes`;
+
+// GE TAX: 2% (capped at 5M)
+const TAX = 0.02;
+
+// ── F2P ITEM WHITELIST ────────────────────────────────────────────────────────
+// Comprehensive list of F2P tradeable items. The OSRS wiki API has no F2P flag,
+// so we maintain this curated list. Source: OSRS wiki + community guides.
+const F2P_ITEM_IDS = new Set([
+  // RUNES
+  554,555,556,557,558,559,560,561,562,563,564,9075,
+  // AMMUNITION
+  882,884,886,888,890,892,877,878,879,880,
+  // FOOD
+  315,317,319,321,323,325,327,329,333,361,363,365,
+  379,380,371,373,291,289,1891,1893,1895,2309,2325,
+  // ORES
+  436,438,440,442,444,447,449,451,453,1436,7936,
+  // BARS
+  2349,2351,2353,2355,2357,2359,2361,9739,
+  // LOGS
+  1511,1521,1519,1517,1515,
+  // GEMS uncut & cut
+  1623,1607,1621,1605,1619,1603,1617,1601,
+  // ARMOUR — MELEE (bronze thru rune)
+  1155,1157,1159,1161,1163,
+  1087,1089,1091,1093,1127,
+  1067,1069,1071,1073,1079,
+  1189,1191,1193,1195,1201,
+  1117,1119,1121,1123,1125,
+  // ARMOUR — RANGE
+  1061,1063,
+  // WEAPONS — scimitars
+  1277,1279,1281,1283,1285,1287,1289,1291,
+  // WEAPONS — longswords
+  1293,1295,1297,1299,1301,1303,1305,
+  // WEAPONS — daggers
+  1333,1335,1337,1339,1341,
+  // BOWS
+  841,843,845,847,849,851,839,
+  // STAVES
+  1381,1383,1385,1387,
+  // CRAFTING
+  1734,1741,1743,1759,1785,1787,1789,1791,1793,1931,1933,1935,1937,1939,
+  // JEWELLERY (gold + gem)
+  1625,1627,1635,1637,1639,1641,1643,1645,1647,1649,
+  // FISHING
+  313,314,
+]);
+
+// Approximate GE buy limits for F2P items (per 4 hours)
+const BUY_LIMITS = {
+  554:25000,555:25000,556:25000,557:25000,558:25000,559:25000,
+  560:18000,561:7000,562:7000,563:7000,564:7000,9075:25000,
+  436:25000,438:25000,440:25000,442:25000,444:25000,
+  447:25000,449:10000,451:100,453:25000,1436:25000,7936:25000,
+  2349:25000,2351:25000,2353:25000,2355:25000,2357:25000,
+  2359:25000,2361:7000,9739:100,
+  1511:25000,1521:25000,1519:25000,1517:25000,1515:25000,
+  1623:25000,1621:25000,1619:25000,1617:25000,
+  1607:25000,1605:25000,1603:25000,1601:25000,
+  379:6000,380:6000,371:6000,373:6000,315:25000,329:10000,
+  882:25000,884:25000,886:25000,888:25000,890:25000,892:11000,
+  1277:100,1279:100,1281:100,1283:100,1285:100,1287:100,1289:100,1291:100,
+  1293:100,1295:100,1297:100,1299:100,1301:100,1303:100,1305:100,
+  1155:100,1157:100,1159:100,1161:100,1163:100,
+  1087:100,1089:100,1091:100,1093:100,1127:100,
+  1067:100,1069:100,1071:100,1073:100,1079:100,
+  1189:100,1191:100,1193:100,1195:100,1201:100,
+  1625:5000,1627:5000,1635:5000,1637:5000,1639:5000,
+  1641:5000,1643:5000,1645:5000,1647:5000,1649:5000,
+  841:10000,843:10000,845:10000,847:10000,849:10000,851:10000,
+  1381:1000,1383:1000,1385:1000,1387:1000,
+  313:25000,314:25000,
+};
+function getBuyLimit(id) { return BUY_LIMITS[id] || 500; }
+
+// Gem pairs — F2P gems only (sapphire, emerald, ruby, diamond)
+// Dragonstone, Onyx, Zenyte are members-only
+const GEMS = [
+  { name:'Sapphire',  emoji:'🔵', uncut:1623, cut:1607, lvl:20, f2p:true },
+  { name:'Emerald',   emoji:'🟢', uncut:1621, cut:1605, lvl:27, f2p:true },
+  { name:'Ruby',      emoji:'🔴', uncut:1619, cut:1603, lvl:34, f2p:true },
+  { name:'Diamond',   emoji:'⬜', uncut:1617, cut:1601, lvl:43, f2p:true },
+  { name:'Dragonstone', emoji:'🟣', uncut:1615, cut:1613, lvl:55, f2p:false },
+  { name:'Onyx',      emoji:'⚫', uncut:6571, cut:6573, lvl:67, f2p:false },
+  { name:'Zenyte',    emoji:'🟠', uncut:19496, cut:19493, lvl:89, f2p:false },
+];
+
+let allPrices = {};
+let allVolumes = {};
+let itemMapping = {};
+let flipData = [];
+let gemData = [];
+let flipSortKey = 'gpday';
+let charts = {};
+let isLoading = false;
+let showF2POnly = true;
+
+// ============================
+// CONSOLE LOGGER
+// ============================
+function log(msg, type='info') {
+  const el = document.getElementById('consoleOutput');
+  const now = new Date();
+  const ts = now.toTimeString().slice(0,8);
+  const line = document.createElement('div');
+  line.className = 'log-line';
+  line.innerHTML = `<span class="log-time">[${ts}]</span><span class="log-${type}">${escHtml(String(msg))}</span>`;
+  el.appendChild(line);
+  el.scrollTop = el.scrollHeight;
+}
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function clearConsole() { document.getElementById('consoleOutput').innerHTML = ''; }
+
+function runConsoleCmd() {
+  const inp = document.getElementById('consoleInputField');
+  const cmd = inp.value.trim().toLowerCase();
+  inp.value = '';
+  log(`> ${cmd}`, 'data');
+  if (!cmd) return;
+  if (cmd === 'help') {
+    log('Commands: help | reload | clear | status | gems | flip | f2p | version', 'info');
+  } else if (cmd === 'reload') {
+    loadAll();
+  } else if (cmd === 'clear') {
+    clearConsole();
+  } else if (cmd === 'status') {
+    log(`Items loaded: ${Object.keys(allPrices).length}`, 'success');
+    log(`Flip opportunities: ${flipData.length}`, 'success');
+    log(`Gem pairs: ${gemData.length}`, 'success');
+  } else if (cmd === 'gems') {
+    gemData.forEach(g => log(`${g.name}: +${fmtGP(g.profit)} gp/cut`, g.profit>0?'success':'error'));
+  } else if (cmd === 'f2p') {
+    const f2p = flipData.filter(f=>f.isF2P).slice(0,10);
+    log(`Top 10 F2P by GP/Day:`, 'info');
+    f2p.forEach(f => log(`${f.name}: ${fmtGP(f.gpDay)}/day (${fmtGP(f.profit)} profit/flip)`, 'success'));
+  } else if (cmd === 'flip') {
+    flipData.slice(0,10).forEach(f => log(`${f.isF2P?'[F2P]':'[P2P]'} ${f.name}: buy ${fmtGP(f.buy)} → sell ${fmtGP(f.sell)} | profit ${fmtGP(f.profit)} | ${fmtGP(f.gpDay)} gp/day`, f.profit>0?'success':'warn'));
+  } else if (cmd === 'version') {
+    log('OSRS Profit Oracle v1.0 — prices.runescape.wiki API', 'info');
+  } else {
+    log(`Unknown command: ${cmd}. Type 'help' for commands.`, 'error');
+  }
+}
+
+// ============================
+// API CALLS
+// ============================
+async function fetchJSON(url) {
+  log(`Fetching: ${url}`, 'info');
+  const res = await fetch(url, { headers: { 'User-Agent': 'OSRS-GE-Tool/1.0' } });
+  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
+  const data = await res.json();
+  log(`✓ Received response`, 'success');
+  return data;
+}
+
+async function loadAll() {
+  if (isLoading) return;
+  isLoading = true;
+  setStatus('loading', 'Fetching market data...');
+  document.getElementById('refreshBtn').disabled = true;
+
+  try {
+    // Load mapping
+    log('Loading item mapping...', 'info');
+    const mapData = await fetchJSON(MAPPING_URL);
+    mapData.forEach(item => { itemMapping[item.id] = item; });
+    log(`Mapped ${mapData.length} items`, 'success');
+
+    // Load latest prices
+    log('Loading latest prices...', 'info');
+    const priceData = await fetchJSON(LATEST_URL);
+    allPrices = priceData.data || {};
+    log(`Got prices for ${Object.keys(allPrices).length} items`, 'success');
+
+    // Load volumes
+    log('Loading trade volumes...', 'info');
+    const volData = await fetchJSON(VOLUME_URL);
+    allVolumes = volData.data || {};
+    log(`Got volumes for ${Object.keys(allVolumes).length} items`, 'success');
+
+    processFlipData();
+    processGemData();
+    renderFlip();
+    renderGems();
+    renderCharts();
+    renderFlipStats();
+
+    setStatus('connected', `Data loaded — ${Object.keys(allPrices).length} items tracked`);
+    document.getElementById('lastUpdate').textContent = `Updated: ${new Date().toLocaleTimeString()}`;
+
+  } catch(e) {
+    log(`ERROR: ${e.message}`, 'error');
+    log('Note: OSRS wiki API may have CORS restrictions. Using fallback mock data.', 'warn');
+    loadMockData();
+  } finally {
+    isLoading = false;
+    document.getElementById('refreshBtn').disabled = false;
+  }
+}
+
+// ============================
+// MOCK DATA (CORS fallback)
+// ============================
+function loadMockData() {
+  log('Loading realistic mock data for demonstration...', 'warn');
+
+  // Mock flip items — F2P focused with realistic prices
+  const mockItems = [
+    // Runes (high volume F2P staples)
+    { id:554,  name:'Fire rune',       buy:4,    sell:6,    vol:9000000 },
+    { id:555,  name:'Water rune',      buy:4,    sell:6,    vol:8500000 },
+    { id:556,  name:'Air rune',        buy:4,    sell:6,    vol:9200000 },
+    { id:557,  name:'Earth rune',      buy:4,    sell:6,    vol:8800000 },
+    { id:558,  name:'Mind rune',       buy:3,    sell:5,    vol:7500000 },
+    { id:560,  name:'Death rune',      buy:195,  sell:215,  vol:2800000 },
+    { id:561,  name:'Nature rune',     buy:125,  sell:138,  vol:3100000 },
+    { id:562,  name:'Chaos rune',      buy:68,   sell:78,   vol:4200000 },
+    { id:563,  name:'Law rune',        buy:155,  sell:172,  vol:2600000 },
+    { id:9075, name:'Astral rune',     buy:100,  sell:114,  vol:3200000 },
+    // Ores
+    { id:444,  name:'Coal',            buy:170,  sell:192,  vol:5500000 },
+    { id:447,  name:'Mithril ore',     buy:260,  sell:298,  vol:2100000 },
+    { id:449,  name:'Adamantite ore',  buy:1050, sell:1190, vol:850000  },
+    { id:451,  name:'Runite ore',      buy:10800,sell:11600,vol:280000  },
+    { id:436,  name:'Copper ore',      buy:40,   sell:56,   vol:7200000 },
+    { id:438,  name:'Tin ore',         buy:38,   sell:54,   vol:6900000 },
+    { id:440,  name:'Iron ore',        buy:85,   sell:100,  vol:6000000 },
+    { id:453,  name:'Coal (alt)',       buy:170,  sell:190,  vol:5400000 },
+    // Bars
+    { id:2357, name:'Gold bar',        buy:88,   sell:110,  vol:7200000 },
+    { id:2349, name:'Bronze bar',      buy:140,  sell:168,  vol:3500000 },
+    { id:2351, name:'Iron bar',        buy:185,  sell:215,  vol:2800000 },
+    { id:2353, name:'Steel bar',       buy:490,  sell:545,  vol:1800000 },
+    { id:2359, name:'Mithril bar',     buy:810,  sell:905,  vol:1100000 },
+    { id:2361, name:'Adamantite bar',  buy:1950, sell:2175, vol:620000  },
+    { id:9739, name:'Runite bar',      buy:12400,sell:13200,vol:190000  },
+    // Logs
+    { id:1511, name:'Logs',            buy:55,   sell:72,   vol:11000000},
+    { id:1521, name:'Oak logs',        buy:48,   sell:63,   vol:9000000 },
+    { id:1519, name:'Willow logs',     buy:12,   sell:18,   vol:14000000},
+    { id:1517, name:'Maple logs',      buy:48,   sell:60,   vol:9000000 },
+    { id:1515, name:'Yew logs',        buy:305,  sell:345,  vol:4200000 },
+    // Gems
+    { id:1623, name:'Uncut sapphire',  buy:520,  sell:590,  vol:600000  },
+    { id:1621, name:'Uncut emerald',   buy:750,  sell:840,  vol:500000  },
+    { id:1619, name:'Uncut ruby',      buy:1300, sell:1460, vol:420000  },
+    { id:1617, name:'Uncut diamond',   buy:2100, sell:2380, vol:350000  },
+    { id:1607, name:'Sapphire',        buy:960,  sell:1100, vol:480000  },
+    { id:1605, name:'Emerald',         buy:1550, sell:1750, vol:380000  },
+    { id:1603, name:'Ruby',            buy:1800, sell:2050, vol:310000  },
+    { id:1601, name:'Diamond',         buy:2700, sell:3050, vol:260000  },
+    // Arrows
+    { id:882,  name:'Bronze arrows',   buy:2,    sell:4,    vol:25000000},
+    { id:884,  name:'Iron arrows',     buy:4,    sell:6,    vol:18000000},
+    { id:886,  name:'Steel arrows',    buy:22,   sell:28,   vol:8000000 },
+    { id:888,  name:'Mithril arrows',  buy:52,   sell:64,   vol:4500000 },
+    { id:890,  name:'Adamant arrows',  buy:110,  sell:132,  vol:3200000 },
+    { id:892,  name:'Rune arrows',     buy:210,  sell:242,  vol:2100000 },
+    // Food
+    { id:379,  name:'Raw lobster',     buy:230,  sell:260,  vol:2800000 },
+    { id:380,  name:'Lobster',         buy:245,  sell:280,  vol:2600000 },
+    { id:371,  name:'Raw swordfish',   buy:215,  sell:248,  vol:2200000 },
+    { id:373,  name:'Swordfish',       buy:230,  sell:268,  vol:2000000 },
+    // Rune armour (lower vol but good profit per flip)
+    { id:1163, name:'Rune full helm',  buy:21000,sell:24800,vol:45000   },
+    { id:1127, name:'Rune platebody',  buy:37000,sell:40800,vol:38000   },
+    { id:1079, name:'Rune platelegs',  buy:37500,sell:41200,vol:37000   },
+    { id:1201, name:'Rune kiteshield', buy:32000,sell:35500,vol:28000   },
+    // Rune weapons
+    { id:1289, name:'Rune scimitar',   buy:15000,sell:17200,vol:65000   },
+    { id:1305, name:'Rune longsword',  buy:19000,sell:21500,vol:42000   },
+    { id:1341, name:'Rune dagger',     buy:4700, sell:5400, vol:90000   },
+    // Jewellery
+    { id:1625, name:'Gold necklace',   buy:210,  sell:290,  vol:650000  },
+    { id:1627, name:'Gold ring',       buy:180,  sell:260,  vol:580000  },
+    // Staves
+    { id:1381, name:'Staff of air',    buy:1450, sell:1680, vol:280000  },
+    { id:1385, name:'Staff of fire',   buy:1500, sell:1720, vol:260000  },
+  ];
+
+  mockItems.forEach(item => {
+    allPrices[item.id] = { high: item.sell, low: item.buy, highTime: Date.now()/1000, lowTime: Date.now()/1000 };
+    allVolumes[item.id] = item.vol;
+    itemMapping[item.id] = { id: item.id, name: item.name };
+  });
+
+  // Mock gem prices
+  const mockGems = [
+    { uncut:1623, cut:1607 },
+    { uncut:1621, cut:1605 },
+    { uncut:1619, cut:1603 },
+    { uncut:1617, cut:1601 },
+    { uncut:1615, cut:1613 },
+    { uncut:6571, cut:6573 },
+    { uncut:19496, cut:19493 },
+  ];
+  const gemPrices = [
+    { unc:520, cut:1050, uname:'Uncut sapphire', cname:'Sapphire' },
+    { unc:750, cut:1600, uname:'Uncut emerald', cname:'Emerald' },
+    { unc:1300, cut:1900, uname:'Uncut ruby', cname:'Ruby' },
+    { unc:2100, cut:2900, uname:'Uncut diamond', cname:'Diamond' },
+    { unc:11000, cut:13500, uname:'Uncut dragonstone', cname:'Dragonstone' },
+    { unc:2250000, cut:2650000, uname:'Onyx', cname:'Onyx' },
+    { unc:9500000, cut:13200000, uname:'Uncut zenyte', cname:'Zenyte' },
+  ];
+  gemPrices.forEach((g, i) => {
+    allPrices[mockGems[i].uncut] = { high: g.unc+50, low: g.unc, highTime: Date.now()/1000, lowTime: Date.now()/1000 };
+    allPrices[mockGems[i].cut] = { high: g.cut+100, low: g.cut, highTime: Date.now()/1000, lowTime: Date.now()/1000 };
+    allVolumes[mockGems[i].uncut] = 50000;
+    allVolumes[mockGems[i].cut] = 80000;
+    itemMapping[mockGems[i].uncut] = { id: mockGems[i].uncut, name: g.uname };
+    itemMapping[mockGems[i].cut] = { id: mockGems[i].cut, name: g.cname };
+  });
+
+  processFlipData();
+  processGemData();
+  renderFlip();
+  renderGems();
+  renderCharts();
+  renderFlipStats();
+  setStatus('connected', 'Using demonstration data (CORS limitation — see console)');
+  document.getElementById('lastUpdate').textContent = `Mock data • ${new Date().toLocaleTimeString()}`;
+  log('Mock data loaded. To use live data, host this file on a server or use a CORS proxy.', 'warn');
+}
+
+// ============================
+// PROCESS DATA
+// ============================
+function applyTax(sellPrice) {
+  // 2% tax on sell, min 1gp, capped at 5M
+  return Math.min(Math.floor(sellPrice * TAX), 5000000);
+}
+
+function processFlipData() {
+  flipData = [];
+
+  // Scan ALL items in the price data for max coverage
+  const idsToScan = new Set([
+    ...Object.keys(allPrices).map(Number),
+    ...F2P_ITEM_IDS,
+  ]);
+
+  for (const id of idsToScan) {
+    const price = allPrices[id];
+    if (!price) continue;
+    const buy = price.low;
+    const sell = price.high;
+    if (!buy || !sell || buy <= 0 || sell <= 0) continue;
+
+    const tax = applyTax(sell);
+    const profit = sell - buy - tax;
+    const margin = buy > 0 ? ((profit / buy) * 100) : 0;
+    const volume = allVolumes[id] || 0;
+    const name = itemMapping[id]?.name || `Item #${id}`;
+    const isF2P = F2P_ITEM_IDS.has(id);
+    const buyLimit = getBuyLimit(id);
+
+    // GP/day potential: profit per flip × min(volume, buyLimit×6) 
+    // (6 buy cycles possible per day at 4hr limit)
+    const dailyCycles = 6;
+    const effectiveVol = Math.min(volume, buyLimit * dailyCycles);
+    const gpDay = profit > 0 ? Math.floor(profit * effectiveVol) : 0;
+
+    if (profit > 0) {
+      flipData.push({ id, name, buy, sell, profit, margin, volume, tax, type:'flip', isF2P, buyLimit, gpDay });
+    }
+  }
+
+  // Default sort: GP/day descending (best money makers first)
+  flipData.sort((a, b) => b.gpDay - a.gpDay);
+  log(`Processed ${flipData.length} flip opportunities (${flipData.filter(f=>f.isF2P).length} F2P)`, 'success');
+}
+
+function processGemData() {
+  gemData = [];
+  for (const gem of GEMS) {
+    const uncutPrice = allPrices[gem.uncut];
+    const cutPrice = allPrices[gem.cut];
+    if (!uncutPrice || !cutPrice) {
+      log(`Missing price data for ${gem.name}`, 'warn');
+      continue;
+    }
+    const buyCost = uncutPrice.low || uncutPrice.high;
+    const sellFor = cutPrice.high || cutPrice.low;
+    if (!buyCost || !sellFor) continue;
+
+    const tax = applyTax(sellFor);
+    const profit = sellFor - buyCost - tax;
+    const margin = buyCost > 0 ? ((profit / buyCost) * 100) : 0;
+    const uncutVol = allVolumes[gem.uncut] || 0;
+    const cutVol = allVolumes[gem.cut] || 0;
+
+    gemData.push({
+      ...gem,
+      buyCost,
+      sellFor,
+      tax,
+      profit,
+      margin,
+      uncutVol,
+      cutVol,
+    });
+  }
+  log(`Processed ${gemData.length} gem pairs`, 'success');
+}
+
+// ============================
+// RENDER
+// ============================
+function fmtGP(n) {
+  if (n === undefined || n === null) return '—';
+  const abs = Math.abs(n);
+  if (abs >= 1000000) return (n/1000000).toFixed(2) + 'M';
+  if (abs >= 1000) return (n/1000).toFixed(1) + 'K';
+  return n.toLocaleString();
+}
+
+function profitClass(p, base) {
+  const pct = base > 0 ? p/base*100 : 0;
+  if (p < 0) return 'profit-neg';
+  if (pct >= 5) return 'profit-high';
+  if (pct >= 2) return 'profit-mid';
+  return 'profit-low';
+}
+
+function setStatus(state, msg) {
+  const dot = document.getElementById('statusDot');
+  dot.className = 'status-dot ' + state;
+  document.getElementById('statusText').textContent = msg;
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById(`section-${name}`).classList.add('active');
+  if (name === 'charts') renderCharts();
+}
+
+function toggleF2P() {
+  showF2POnly = !showF2POnly;
+  const btn = document.getElementById('f2pToggle');
+  if (showF2POnly) {
+    btn.textContent = '✓ F2P Only';
+    btn.style.background = 'rgba(76,175,122,0.15)';
+    btn.style.borderColor = 'rgba(76,175,122,0.5)';
+    btn.style.color = 'var(--green)';
+  } else {
+    btn.textContent = '○ All Items';
+    btn.style.background = 'transparent';
+    btn.style.borderColor = 'var(--border-gold)';
+    btn.style.color = 'var(--gold)';
+  }
+  renderFlip();
+}
+
+function setSortFlip(key) {
+  flipSortKey = key;
+  renderFlip();
+}
+
+function renderFlipStats() {
+  const f2pItems = flipData.filter(f => f.isF2P);
+  const profitable = flipData.filter(f => f.profit > 0).length;
+  const bestGpDay = f2pItems.length ? f2pItems[0].gpDay : (flipData.length ? flipData[0].gpDay : 0);
+  const bestProfit = f2pItems.length ? Math.max(...f2pItems.map(f=>f.profit)) : 0;
+
+  document.getElementById('flipStats').innerHTML = `
+    <div class="stat-card">
+      <div class="stat-label">F2P Items</div>
+      <div class="stat-val">${f2pItems.length}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Best GP/Day</div>
+      <div class="stat-val green">${fmtGP(bestGpDay)}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Best Profit/Flip</div>
+      <div class="stat-val">${fmtGP(bestProfit)}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Total Items</div>
+      <div class="stat-val">${profitable}</div>
+    </div>
+  `;
+}
+
+function renderFlip() {
+  const search = document.getElementById('searchFilter').value.toLowerCase();
+  const typeFilter = document.getElementById('typeFilter').value;
+  const sortKey = document.getElementById('sortFilter').value || flipSortKey;
+
+  let data = [...flipData];
+
+  // F2P filter (default ON)
+  if (showF2POnly) data = data.filter(f => f.isF2P);
+  if (search) data = data.filter(f => f.name.toLowerCase().includes(search));
+  if (typeFilter !== 'all') data = data.filter(f => f.type === typeFilter);
+
+  const sortMap = { profit:'profit', margin:'margin', volume:'volume', gpday:'gpDay' };
+  const sk = sortMap[sortKey] || 'gpDay';
+  data.sort((a,b) => b[sk] - a[sk]);
+
+  const tbody = document.getElementById('flipBody');
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="9"><div class="empty">No items match your filters</div></td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = data.slice(0, 100).map(f => `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:5px">
+          ${f.isF2P ? '<span title="F2P" style="font-size:10px;color:var(--green);font-family:Cinzel,serif;border:1px solid rgba(76,175,122,0.4);border-radius:2px;padding:1px 4px;flex-shrink:0">F2P</span>' : '<span style="font-size:10px;color:var(--text-dim);font-family:Cinzel,serif;border:1px solid var(--border);border-radius:2px;padding:1px 4px;flex-shrink:0">P2P</span>'}
+          <div class="item-name" title="${f.name}">${f.name}</div>
+        </div>
+      </td>
+      <td>${fmtGP(f.buy)} <span class="gp">gp</span></td>
+      <td>${fmtGP(f.sell)} <span class="gp">gp</span></td>
+      <td class="${profitClass(f.profit, f.buy)}">${fmtGP(f.profit)}</td>
+      <td class="${f.margin >= 5 ? 'profit-high' : f.margin >= 2 ? 'profit-mid' : 'profit-low'}">${f.margin.toFixed(1)}%</td>
+      <td style="color:var(--text-dim)">${fmtGP(f.buyLimit)}</td>
+      <td>${fmtGP(f.volume)}</td>
+      <td class="${f.gpDay > 1000000 ? 'profit-high' : f.gpDay > 100000 ? 'profit-mid' : 'profit-low'}">${fmtGP(f.gpDay)}</td>
+    </tr>
+  `).join('');
+}
+
+function renderGems() {
+  const grid = document.getElementById('gemsGrid');
+  if (!gemData.length) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1">No gem data available</div>';
+    return;
+  }
+  grid.innerHTML = gemData.map(g => `
+    <div class="gem-card" style="${!g.f2p ? 'opacity:0.65' : ''}">
+      <div class="gem-card-header">
+        <span class="gem-emoji">${g.emoji}</span>
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:6px">
+            <div class="gem-name">${g.name}</div>
+            ${g.f2p
+              ? '<span style="font-size:9px;color:var(--green);border:1px solid rgba(76,175,122,0.4);border-radius:2px;padding:1px 4px;font-family:Cinzel,serif">F2P</span>'
+              : '<span style="font-size:9px;color:var(--text-dim);border:1px solid var(--border);border-radius:2px;padding:1px 4px;font-family:Cinzel,serif">P2P</span>'
+            }
+          </div>
+          <div style="font-size:11px;color:var(--text-dim)">Crafting lvl ${g.lvl}</div>
+        </div>
+      </div>
+      <div class="gem-card-body">
+        <div class="gem-row">
+          <span class="gem-label">Buy (uncut)</span>
+          <span class="gem-val">${fmtGP(g.buyCost)} gp</span>
+        </div>
+        <div class="gem-row">
+          <span class="gem-label">Sell (cut)</span>
+          <span class="gem-val">${fmtGP(g.sellFor)} gp</span>
+        </div>
+        <div class="gem-row">
+          <span class="gem-label">GE Tax (2%)</span>
+          <span class="gem-val" style="color:var(--red)">-${fmtGP(g.tax)} gp</span>
+        </div>
+        <div class="gem-row">
+          <span class="gem-label">Margin</span>
+          <span class="gem-val">${g.margin.toFixed(1)}%</span>
+        </div>
+        <div class="gem-row">
+          <span class="gem-label">Uncut vol/day</span>
+          <span class="gem-val">${fmtGP(g.uncutVol)}</span>
+        </div>
+        <div class="${g.profit > 0 ? 'gem-profit-banner' : 'gem-profit-banner negative'}">
+          ${g.profit > 0 ? '▲' : '▼'} ${fmtGP(Math.abs(g.profit))} gp per gem ${g.profit > 0 ? 'profit' : 'loss'}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderCharts() {
+  const topFlips = [...flipData].filter(f => f.isF2P).sort((a,b) => b.gpDay - a.gpDay).slice(0, 12);
+  const goldColor = '#c9a227';
+  const greenColor = '#4caf7a';
+  const dimColor = '#3d3020';
+
+  Chart.defaults.color = '#d4c5a9';
+  Chart.defaults.font.family = "'Crimson Pro', serif";
+
+  // Chart 1: Top F2P flips by GP/Day
+  if (charts.flip) charts.flip.destroy();
+  const ctx1 = document.getElementById('chartFlip').getContext('2d');
+  charts.flip = new Chart(ctx1, {
+    type: 'bar',
+    data: {
+      labels: topFlips.map(f => f.name.length > 18 ? f.name.slice(0,16)+'…' : f.name),
+      datasets: [
+        {
+          label: 'GP/Day Potential',
+          data: topFlips.map(f => f.gpDay),
+          backgroundColor: 'rgba(201,162,39,0.6)',
+          borderColor: goldColor,
+          borderWidth: 1,
+          borderRadius: 2,
+          yAxisID: 'y',
+        },
+        {
+          label: 'Profit/Flip',
+          data: topFlips.map(f => f.profit),
+          backgroundColor: 'rgba(76,175,122,0.5)',
+          borderColor: greenColor,
+          borderWidth: 1,
+          borderRadius: 2,
+          yAxisID: 'y2',
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 11 } } },
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${fmtGP(ctx.raw)} gp` } }
+      },
+      scales: {
+        x: { ticks: { maxRotation: 45, font: { size: 10 } }, grid: { color: dimColor } },
+        y: { ticks: { callback: v => fmtGP(v) }, grid: { color: dimColor }, title: { display: true, text: 'GP/Day', color: goldColor, font:{size:10} } },
+        y2: { position: 'right', ticks: { callback: v => fmtGP(v) }, grid: { drawOnChartArea: false }, title: { display: true, text: 'Profit/Flip', color: greenColor, font:{size:10} } },
+      }
+    }
+  });
+
+  // Chart 2: Gem profits
+  if (charts.gems) charts.gems.destroy();
+  const ctx2 = document.getElementById('chartGems').getContext('2d');
+  charts.gems = new Chart(ctx2, {
+    type: 'bar',
+    data: {
+      labels: gemData.map(g => g.name),
+      datasets: [
+        {
+          label: 'Buy Cost (uncut)',
+          data: gemData.map(g => g.buyCost),
+          backgroundColor: 'rgba(74,158,202,0.5)',
+          borderColor: '#4a9eca',
+          borderWidth: 1,
+        },
+        {
+          label: 'Sell Price (cut)',
+          data: gemData.map(g => g.sellFor),
+          backgroundColor: 'rgba(76,175,122,0.5)',
+          borderColor: '#4caf7a',
+          borderWidth: 1,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${fmtGP(ctx.raw)} gp` } }
+      },
+      scales: {
+        x: { grid: { color: dimColor } },
+        y: { ticks: { callback: v => fmtGP(v) }, grid: { color: dimColor }, type: 'logarithmic' }
+      }
+    }
+  });
+
+  // Chart 3: Margin vs Volume scatter
+  if (charts.scatter) charts.scatter.destroy();
+  const ctx3 = document.getElementById('chartScatter').getContext('2d');
+  const scatterData = flipData.filter(f => f.volume > 0 && f.margin > 0 && f.margin < 50).slice(0, 60);
+  charts.scatter = new Chart(ctx3, {
+    type: 'scatter',
+    data: {
+      datasets: [{
+        label: 'Items',
+        data: scatterData.map(f => ({ x: Math.log10(f.volume+1), y: f.margin, name: f.name, profit: f.profit })),
+        backgroundColor: scatterData.map(f => f.profit > 100000 ? 'rgba(201,162,39,0.8)' : f.profit > 10000 ? 'rgba(76,175,122,0.7)' : 'rgba(74,158,202,0.5)'),
+        pointRadius: 5,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => `${ctx.raw.name}: ${ctx.raw.y.toFixed(1)}% margin, ${fmtGP(ctx.raw.profit)} profit`
+          }
+        }
+      },
+      scales: {
+        x: {
+          title: { display: true, text: 'Volume (log scale)', color: '#7a6e5c' },
+          ticks: { callback: v => ['1','10','100','1K','10K','100K','1M'][Math.round(v)] || '' },
+          grid: { color: dimColor }
+        },
+        y: {
+          title: { display: true, text: 'Margin %', color: '#7a6e5c' },
+          ticks: { callback: v => v+'%' },
+          grid: { color: dimColor }
+        }
+      }
+    }
+  });
+}
+
+// ============================
+// INIT
+// ============================
+window.addEventListener('load', () => {
+  log('OSRS Profit Oracle initialized', 'success');
+  log('Connecting to prices.runescape.wiki API...', 'info');
+  log('Note: If CORS blocks live data, realistic mock data will be used', 'warn');
+  loadAll();
+
+  // Auto-refresh every 5 minutes
+  setInterval(() => {
+    log('Auto-refresh triggered (5min interval)', 'info');
+    loadAll();
+  }, 5 * 60 * 1000);
+});
+</script>
+</body>
+</html>
