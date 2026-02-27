@@ -38,7 +38,6 @@
     overflow-x: hidden;
   }
 
-  /* Parchment texture overlay */
   body::before {
     content: '';
     position: fixed;
@@ -52,7 +51,6 @@
 
   .app { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 0 12px 40px; }
 
-  /* HEADER */
   header {
     text-align: center;
     padding: 28px 16px 16px;
@@ -90,7 +88,6 @@
     margin-top: 4px;
   }
 
-  /* TABS */
   .tabs {
     display: flex;
     gap: 4px;
@@ -122,7 +119,6 @@
     box-shadow: inset 0 1px 0 rgba(201,162,39,0.15);
   }
 
-  /* PANELS */
   .panel {
     background: linear-gradient(135deg, var(--panel), var(--panel2));
     border: 1px solid var(--border);
@@ -148,7 +144,6 @@
   }
   .panel-body { padding: 14px; }
 
-  /* STATUS BAR */
   .status-bar {
     display: flex;
     align-items: center;
@@ -188,11 +183,9 @@
   .refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
   .last-update { font-size: 11px; color: var(--text-dim); }
 
-  /* SECTIONS */
   .section { display: none; }
   .section.active { display: block; }
 
-  /* TABLE */
   .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th {
@@ -235,7 +228,6 @@
   .badge-flip { background: rgba(74,158,202,0.2); color: var(--blue); border: 1px solid rgba(74,158,202,0.3); }
   .badge-craft { background: rgba(76,175,122,0.2); color: var(--green); border: 1px solid rgba(76,175,122,0.3); }
 
-  /* GEMS GRID */
   .gems-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
   .gem-card {
     background: linear-gradient(135deg, var(--panel2), #1a1510);
@@ -283,10 +275,8 @@
     color: var(--red);
   }
 
-  /* CHART AREA */
   .chart-container { position: relative; height: 220px; margin: 10px 0; }
 
-  /* INLINE PRICE CHART (row expansion) */
   .price-chart-row td {
     padding: 0 !important;
     border-bottom: 2px solid var(--border-gold) !important;
@@ -361,7 +351,6 @@
   .expand-arrow { display: inline-block; transition: transform 0.2s; margin-left: 4px; font-size: 10px; color: var(--text-dim); }
   .expand-arrow.open { transform: rotate(90deg); }
 
-  /* CONSOLE */
   .console-wrap {
     background: #080806;
     border: 1px solid var(--border);
@@ -408,7 +397,6 @@
   }
   .console-btn:hover { background: rgba(201,162,39,0.1); }
 
-  /* FILTERS */
   .filters {
     display: flex;
     gap: 8px;
@@ -439,7 +427,6 @@
     outline: none;
   }
 
-  /* STATS ROW */
   .stats-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -468,13 +455,11 @@
   }
   .stat-val.green { color: var(--green); }
 
-  /* SCROLLBAR */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
 
-  /* LOADING */
   .loading-overlay {
     display: flex;
     flex-direction: column;
@@ -497,13 +482,120 @@
   .empty { text-align: center; padding: 30px; color: var(--text-dim); font-style: italic; }
   .gp { font-size: 11px; color: var(--text-dim); margin-left: 2px; }
 
-  /* MOBILE */
+  .comp-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(74,158,202,0.1);
+    border: 1px solid rgba(74,158,202,0.25);
+    border-radius: 3px;
+    padding: 1px 6px;
+    font-size: 11px;
+    color: var(--blue);
+    white-space: nowrap;
+  }
+  .comp-plus {
+    font-size: 10px;
+    color: var(--text-dim);
+    margin: 0 2px;
+  }
+  .jew-detail-row td {
+    padding: 0 !important;
+    border-bottom: 2px solid var(--border-gold) !important;
+    background: #0c0a07;
+  }
+  .jew-detail-wrap {
+    padding: 12px 14px 16px;
+    animation: slideDown 0.18s ease;
+  }
+  .jew-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  @media(max-width:600px){ .jew-detail-grid { grid-template-columns: 1fr; } }
+  .jew-breakdown {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 10px 12px;
+  }
+  .jew-breakdown-title {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+  .jb-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 3px 0;
+    border-bottom: 1px solid rgba(61,48,32,0.3);
+  }
+  .jb-row:last-child { border: none; font-weight: 600; }
+  .jb-label { color: var(--text-dim); }
+  .jb-val   { color: var(--text-bright); }
+  .jb-total-label { color: var(--text); }
+  .jb-profit-pos { color: var(--green); font-size: 15px; }
+  .jb-profit-neg { color: var(--red);   font-size: 15px; }
+  tr.jew-row { cursor: pointer; }
+  tr.jew-row:hover td { background: rgba(201,162,39,0.06) !important; }
+  tr.jew-row.expanded td { background: rgba(201,162,39,0.04) !important; border-bottom: none !important; }
+
   @media (max-width: 500px) {
     .filters { flex-direction: column; }
     .filter-select { width: 100%; }
     td, th { padding: 6px 6px; }
     .item-name { max-width: 100px; }
   }
+
+  .jewel-sort-bar {
+    display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;
+  }
+  .jewel-sort-bar label {
+    font-family: 'Cinzel', serif; font-size: 11px; color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .jewel-stats { margin-bottom: 14px; }
+  .recipe-breakdown {
+    display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
+    font-size: 12px; color: var(--text-dim);
+  }
+  .recipe-item {
+    display: flex; align-items: center; gap: 4px;
+    background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+    border-radius: 3px; padding: 2px 7px;
+  }
+  .recipe-plus { color: var(--text-dim); font-size: 14px; }
+  .recipe-arrow { color: var(--gold-dim); font-size: 14px; }
+  .recipe-cost { color: var(--red); font-weight: 600; }
+  .recipe-sell { color: var(--green); font-weight: 600; }
+  .jewel-profit-high { color: #4caf7a; font-weight: 700; }
+  .jewel-profit-mid  { color: var(--gold); font-weight: 600; }
+  .jewel-profit-low  { color: var(--text-dim); }
+  .jewel-profit-neg  { color: var(--red); font-weight: 600; }
+  .craft-badge {
+    display: inline-block; padding: 2px 7px;
+    border-radius: 2px; font-family: 'Cinzel', serif;
+    font-size: 9px; font-weight: 600; letter-spacing: 0.5px;
+    background: rgba(76,175,122,0.15); color: var(--green);
+    border: 1px solid rgba(76,175,122,0.3);
+  }
+  .lvl-badge {
+    display: inline-block; padding: 2px 6px;
+    border-radius: 2px; font-family: 'Cinzel', serif;
+    font-size: 9px; color: var(--gold-dim);
+    border: 1px solid var(--border);
+  }
+  .profit-bar-wrap {
+    width: 100%; background: rgba(0,0,0,0.3);
+    border-radius: 2px; height: 4px; margin-top: 3px;
+  }
+  .profit-bar { height: 4px; border-radius: 2px; transition: width 0.4s; }
 </style>
 </head>
 <body>
@@ -514,11 +606,13 @@
     <div class="subtitle">Real-time market intelligence for the discerning merchant</div>
   </header>
 
+  <!-- FIX 1: Removed duplicate jewellery tab button -->
   <div class="tabs">
-    <button class="tab active" onclick="switchTab('flip')">⚖ Flip</button>
-    <button class="tab" onclick="switchTab('gems')">💎 Gems</button>
-    <button class="tab" onclick="switchTab('charts')">📈 Charts</button>
-    <button class="tab" onclick="switchTab('console')">⌨ Console</button>
+    <button class="tab active" onclick="switchTab('flip', event)">⚖ Flip</button>
+    <button class="tab" onclick="switchTab('gems', event)">💎 Gems</button>
+    <button class="tab" onclick="switchTab('jewellery', event)">💍 Jewellery</button>
+    <button class="tab" onclick="switchTab('charts', event)">📈 Charts</button>
+    <button class="tab" onclick="switchTab('console', event)">⌨ Console</button>
   </div>
 
   <div class="status-bar">
@@ -588,6 +682,73 @@
     </div>
   </div>
 
+  <!-- FIX 2: Single jewellery section only, using jewel* IDs throughout -->
+  <div class="section" id="section-jewellery">
+    <!-- Stats row for jewellery — uses id="jewelStats" -->
+    <div class="stats-row jewel-stats" id="jewelStats"></div>
+
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-header"><span class="panel-icon">ℹ</span><span class="panel-title">Jewellery Crafting Calculator</span></div>
+      <div class="panel-body">
+        <p style="font-size:13px;color:var(--text-dim);font-style:italic">
+          Buy components (uncut gem + gold bar) → craft jewellery → sell on GE. Shows net profit after 2% GE tax.<br>
+          <span style="color:var(--gold-dim);font-size:12px">Profit = Sell price − uncut gem − gold bar − 2% GE tax. Approx 1,200 items/hr on F2P worlds. Click any row to see price history.</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="jewel-sort-bar">
+      <input class="filter-input" id="jewelSearch" placeholder="Search jewellery..." oninput="renderJewellery()" style="max-width:200px">
+      <label>Sort:</label>
+      <select class="filter-select" id="jewelSort" onchange="renderJewellery()">
+        <option value="profit">Profit/Item ★</option>
+        <option value="roi">ROI %</option>
+        <option value="gphr">GP/Hr Est.</option>
+        <option value="volume">Volume</option>
+      </select>
+      <label style="margin-left:8px">Show:</label>
+      <select class="filter-select" id="jewelType" onchange="renderJewellery()">
+        <option value="all">All Jewellery</option>
+        <option value="ring">Rings</option>
+        <option value="necklace">Necklaces</option>
+        <option value="amulet">Amulets</option>
+        <option value="bracelet">Bracelets</option>
+      </select>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-icon">💍</span>
+        <span class="panel-title">Crafting Opportunities</span>
+        <span style="margin-left:auto;font-size:11px;color:var(--text-dim)" id="jewelCount"></span>
+      </div>
+      <div class="panel-body" style="padding:0">
+        <div class="table-wrap">
+          <table id="jewelTable">
+            <thead>
+              <tr>
+                <th style="min-width:160px">Item</th>
+                <th>Type</th>
+                <th>Lvl</th>
+                <th>Components</th>
+                <th>Total Cost</th>
+                <th>Sell Price</th>
+                <th>Tax</th>
+                <th style="color:var(--gold)">Profit ★</th>
+                <th>ROI%</th>
+                <th>GP/Hr</th>
+                <th>Vol/Day</th>
+              </tr>
+            </thead>
+            <tbody id="jewelBody">
+              <tr><td colspan="11"><div class="loading-overlay"><div class="spinner"></div><span>Loading jewellery data...</span></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- CHARTS TAB -->
   <div class="section" id="section-charts">
     <div class="panel" style="margin-bottom:14px">
@@ -635,55 +796,32 @@ const MAPPING_URL = `${PROXY}/mapping`;
 const LATEST_URL = `${PROXY}/latest`;
 const VOLUME_URL = `${PROXY}/volumes`;
 
-// GE TAX: 2% (capped at 5M)
 const TAX = 0.02;
 
-// ── F2P ITEM WHITELIST ────────────────────────────────────────────────────────
-// Comprehensive list of F2P tradeable items. The OSRS wiki API has no F2P flag,
-// so we maintain this curated list. Source: OSRS wiki + community guides.
 const F2P_ITEM_IDS = new Set([
-  // RUNES
   554,555,556,557,558,559,560,561,562,563,564,9075,
-  // AMMUNITION
   882,884,886,888,890,892,877,878,879,880,
-  // FOOD
   315,317,319,321,323,325,327,329,333,361,363,365,
   379,380,371,373,291,289,1891,1893,1895,2309,2325,
-  // ORES
   436,438,440,442,444,447,449,451,453,1436,7936,
-  // BARS
   2349,2351,2353,2355,2357,2359,2361,9739,
-  // LOGS
   1511,1521,1519,1517,1515,
-  // GEMS uncut & cut
   1623,1607,1621,1605,1619,1603,1617,1601,
-  // ARMOUR — MELEE (bronze thru rune)
   1155,1157,1159,1161,1163,
   1087,1089,1091,1093,1127,
   1067,1069,1071,1073,1079,
   1189,1191,1193,1195,1201,
-  1117,1119,1121,1123,1125,
-  // ARMOUR — RANGE
   1061,1063,
-  // WEAPONS — scimitars
   1277,1279,1281,1283,1285,1287,1289,1291,
-  // WEAPONS — longswords
   1293,1295,1297,1299,1301,1303,1305,
-  // WEAPONS — daggers
   1333,1335,1337,1339,1341,
-  // BOWS
   841,843,845,847,849,851,839,
-  // STAVES
   1381,1383,1385,1387,
-  // CRAFTING
   1734,1741,1743,1759,1785,1787,1789,1791,1793,1931,1933,1935,1937,1939,
-  // JEWELLERY (gold + gem)
   1625,1627,1635,1637,1639,1641,1643,1645,1647,1649,
-  // FISHING
   313,314,
 ]);
 
-// Approximate GE buy limits for F2P items (per 4 hours)
 const BUY_LIMITS = {
   554:25000,555:25000,556:25000,557:25000,558:25000,559:25000,
   560:18000,561:7000,562:7000,563:7000,564:7000,9075:25000,
@@ -710,18 +848,75 @@ const BUY_LIMITS = {
 };
 function getBuyLimit(id) { return BUY_LIMITS[id] || 500; }
 
-// Gem pairs — F2P gems only (sapphire, emerald, ruby, diamond)
-// Dragonstone, Onyx, Zenyte are members-only
 const GEMS = [
-  { name:'Sapphire',  emoji:'🔵', uncut:1623, cut:1607, lvl:20, f2p:true },
-  { name:'Emerald',   emoji:'🟢', uncut:1621, cut:1605, lvl:27, f2p:true },
-  { name:'Ruby',      emoji:'🔴', uncut:1619, cut:1603, lvl:34, f2p:true },
-  { name:'Diamond',   emoji:'⬜', uncut:1617, cut:1601, lvl:43, f2p:true },
+  { name:'Sapphire',    emoji:'🔵', uncut:1623, cut:1607, lvl:20, f2p:true },
+  { name:'Emerald',     emoji:'🟢', uncut:1621, cut:1605, lvl:27, f2p:true },
+  { name:'Ruby',        emoji:'🔴', uncut:1619, cut:1603, lvl:34, f2p:true },
+  { name:'Diamond',     emoji:'⬜', uncut:1617, cut:1601, lvl:43, f2p:true },
   { name:'Dragonstone', emoji:'🟣', uncut:1615, cut:1613, lvl:55, f2p:false },
-  { name:'Onyx',      emoji:'⚫', uncut:6571, cut:6573, lvl:67, f2p:false },
-  { name:'Zenyte',    emoji:'🟠', uncut:19496, cut:19493, lvl:89, f2p:false },
+  { name:'Onyx',        emoji:'⚫', uncut:6571, cut:6573, lvl:67, f2p:false },
+  { name:'Zenyte',      emoji:'🟠', uncut:19496, cut:19493, lvl:89, f2p:false },
 ];
 
+// FIX 3: Single JEWELLERY_RECIPES declaration — using components[] format
+// matched to processJewelleryData() below
+const CRAFT_RATE_PER_HR = 1200;
+
+const JEWELLERY_RECIPES = [
+  // ── GOLD (no gem) ──
+  { name:'Gold ring',         type:'ring',     emoji:'💛', craftLvl:5,  outputId:1635,
+    components:[{id:2357,name:'Gold bar',qty:1}] },
+  { name:'Gold necklace',     type:'necklace', emoji:'💛', craftLvl:6,  outputId:1654,
+    components:[{id:2357,name:'Gold bar',qty:1}] },
+  { name:'Gold bracelet',     type:'bracelet', emoji:'💛', craftLvl:7,  outputId:11069,
+    components:[{id:2357,name:'Gold bar',qty:1}] },
+  { name:'Gold amulet (u)',   type:'amulet',   emoji:'💛', craftLvl:8,  outputId:1673,
+    components:[{id:2357,name:'Gold bar',qty:1}] },
+  // ── SAPPHIRE ──
+  { name:'Sapphire ring',     type:'ring',     emoji:'🔵', craftLvl:20, outputId:1637,
+    components:[{id:2357,name:'Gold bar',qty:1},{id:1607,name:'Sapphire',qty:1}] },
+  { name:'Sapphire necklace', type:'necklace', emoji:'🔵', craftLvl:22, outputId:1656,
+    components:[{id:2357,name:'Gold bar',qty:1},{id:1607,name:'Sapphire',qty:1}] },
+  { name:'Sapphire bracelet', type:'bracelet', emoji:'🔵', craftLvl:23, outputId:11072,
+    components:[{id:2357,name:'Gold bar',qty:1},{id:1607,name:'Sapphire',qty:1}] },
+  { name:'Sapphire amulet (u)',type:'amulet',  emoji:'🔵', craftLvl:24, outputId:1675,
+    components:[{id:2357,name:'Gold bar',qty:1},{id:1607,name:'Sapphire',qty:1}] },
+  // ── EMERALD ──
+  { name:'Emerald ring',      type:'ring',     emoji:'🟢', craftLvl:27, outputId:1639,
+    components:[{id:2357,name:'Gold bar',qty:1},{id:1605,name:'Emerald',qty:1}] },
+  { name:'Emerald necklace',  type:'necklace', emoji:'🟢', craftLvl:29, outputId:1658,
+    components:[{id:2357,name:'Gold bar',qty:1},{id:1605,name:'Emerald',qty:1}] },
+  { name:'Emerald bracelet',  type:'bracelet', emoji:'🟢', craftLvl:30, outputId:11076,
+    components:[{id:2357,name:'Gold bar',qty:1},{id:1605,name:'Emerald',qty:1}] },
+  { name:'Emerald amulet (u)',type:'amulet',   emoji:'🟢', craftLvl:31, outputId:1677,
+    components:[{id:2357,name:'Gold bar',qty:1},{id:1605,name:'Emerald',qty:1}] },
+  // ── RUBY ──
+  { name:'Ruby ring',         type:'ring',     emoji:'🔴', craftLvl:34, outputId:1641,
+    components:[{id:2357,name:'Gold bar',qty:1},{id:1603,name:'Ruby',qty:1}] },
+  { name:'Ruby necklace',     type:'necklace', emoji:'🔴', craftLvl:40, outputId:1660,
+    components:[{id:2357,name:'Gold bar',qty:1},{id:1603,name:'Ruby',qty:1}] },
+  { name:'Ruby bracelet',     type:'bracelet', emoji:'🔴', craftLvl:42, outputId:11078,
+    components:[{id:2357,name:'Gold bar',qty:1},{id:1603,name:'Ruby',qty:1}] },
+  { name:'Ruby amulet (u)',   type:'amulet',   emoji:'🔴', craftLvl:50, outputId:1679,
+    components:[{id:2357,name:'Gold bar',qty:1},{id:1603,name:'Ruby',qty:1}] },
+  // ── DIAMOND ──
+  { name:'Diamond ring',      type:'ring',     emoji:'⬜', craftLvl:43, outputId:1643,
+    components:[{id:2357,name:'Gold bar',qty:1},{id:1601,name:'Diamond',qty:1}] },
+  { name:'Diamond necklace',  type:'necklace', emoji:'⬜', craftLvl:56, outputId:1662,
+    components:[{id:2357,name:'Gold bar',qty:1},{id:1601,name:'Diamond',qty:1}] },
+  { name:'Diamond bracelet',  type:'bracelet', emoji:'⬜', craftLvl:58, outputId:11080,
+    components:[{id:2357,name:'Gold bar',qty:1},{id:1601,name:'Diamond',qty:1}] },
+  { name:'Diamond amulet (u)',type:'amulet',   emoji:'⬜', craftLvl:70, outputId:1681,
+    components:[{id:2357,name:'Gold bar',qty:1},{id:1601,name:'Diamond',qty:1}] },
+];
+
+JEWELLERY_RECIPES.forEach(r => {
+  F2P_ITEM_IDS.add(r.outputId);
+  r.components.forEach(c => F2P_ITEM_IDS.add(c.id));
+});
+
+// FIX 4: Single jewelleryData declaration
+let jewelleryData = [];
 let allPrices = {};
 let allVolumes = {};
 let itemMapping = {};
@@ -770,7 +965,7 @@ function runConsoleCmd() {
     gemData.forEach(g => log(`${g.name}: +${fmtGP(g.profit)} gp/cut`, g.profit>0?'success':'error'));
   } else if (cmd === 'f2p') {
     const f2p = flipData.filter(f=>f.isF2P).slice(0,10);
-    log(`Top 10 F2P by GP/Day:`, 'info');
+    log('Top 10 F2P by GP/Day:', 'info');
     f2p.forEach(f => log(`${f.name}: ${fmtGP(f.gpDay)}/day (${fmtGP(f.profit)} profit/flip)`, 'success'));
   } else if (cmd === 'flip') {
     flipData.slice(0,10).forEach(f => log(`${f.isF2P?'[F2P]':'[P2P]'} ${f.name}: buy ${fmtGP(f.buy)} → sell ${fmtGP(f.sell)} | profit ${fmtGP(f.profit)} | ${fmtGP(f.gpDay)} gp/day`, f.profit>0?'success':'warn'));
@@ -800,19 +995,16 @@ async function loadAll() {
   document.getElementById('refreshBtn').disabled = true;
 
   try {
-    // Load mapping
     log('Loading item mapping...', 'info');
     const mapData = await fetchJSON(MAPPING_URL);
     mapData.forEach(item => { itemMapping[item.id] = item; });
     log(`Mapped ${mapData.length} items`, 'success');
 
-    // Load latest prices
     log('Loading latest prices...', 'info');
     const priceData = await fetchJSON(LATEST_URL);
     allPrices = priceData.data || {};
     log(`Got prices for ${Object.keys(allPrices).length} items`, 'success');
 
-    // Load volumes
     log('Loading trade volumes...', 'info');
     const volData = await fetchJSON(VOLUME_URL);
     allVolumes = volData.data || {};
@@ -820,8 +1012,10 @@ async function loadAll() {
 
     processFlipData();
     processGemData();
+    processJewelleryData();
     renderFlip();
     renderGems();
+    renderJewellery();
     renderCharts();
     renderFlipStats();
 
@@ -844,9 +1038,7 @@ async function loadAll() {
 function loadMockData() {
   log('Loading realistic mock data for demonstration...', 'warn');
 
-  // Mock flip items — F2P focused with realistic prices
   const mockItems = [
-    // Runes (high volume F2P staples)
     { id:554,  name:'Fire rune',       buy:4,    sell:6,    vol:9000000 },
     { id:555,  name:'Water rune',      buy:4,    sell:6,    vol:8500000 },
     { id:556,  name:'Air rune',        buy:4,    sell:6,    vol:9200000 },
@@ -857,7 +1049,6 @@ function loadMockData() {
     { id:562,  name:'Chaos rune',      buy:68,   sell:78,   vol:4200000 },
     { id:563,  name:'Law rune',        buy:155,  sell:172,  vol:2600000 },
     { id:9075, name:'Astral rune',     buy:100,  sell:114,  vol:3200000 },
-    // Ores
     { id:444,  name:'Coal',            buy:170,  sell:192,  vol:5500000 },
     { id:447,  name:'Mithril ore',     buy:260,  sell:298,  vol:2100000 },
     { id:449,  name:'Adamantite ore',  buy:1050, sell:1190, vol:850000  },
@@ -866,7 +1057,6 @@ function loadMockData() {
     { id:438,  name:'Tin ore',         buy:38,   sell:54,   vol:6900000 },
     { id:440,  name:'Iron ore',        buy:85,   sell:100,  vol:6000000 },
     { id:453,  name:'Coal (alt)',       buy:170,  sell:190,  vol:5400000 },
-    // Bars
     { id:2357, name:'Gold bar',        buy:88,   sell:110,  vol:7200000 },
     { id:2349, name:'Bronze bar',      buy:140,  sell:168,  vol:3500000 },
     { id:2351, name:'Iron bar',        buy:185,  sell:215,  vol:2800000 },
@@ -874,13 +1064,11 @@ function loadMockData() {
     { id:2359, name:'Mithril bar',     buy:810,  sell:905,  vol:1100000 },
     { id:2361, name:'Adamantite bar',  buy:1950, sell:2175, vol:620000  },
     { id:9739, name:'Runite bar',      buy:12400,sell:13200,vol:190000  },
-    // Logs
     { id:1511, name:'Logs',            buy:55,   sell:72,   vol:11000000},
     { id:1521, name:'Oak logs',        buy:48,   sell:63,   vol:9000000 },
     { id:1519, name:'Willow logs',     buy:12,   sell:18,   vol:14000000},
     { id:1517, name:'Maple logs',      buy:48,   sell:60,   vol:9000000 },
     { id:1515, name:'Yew logs',        buy:305,  sell:345,  vol:4200000 },
-    // Gems
     { id:1623, name:'Uncut sapphire',  buy:520,  sell:590,  vol:600000  },
     { id:1621, name:'Uncut emerald',   buy:750,  sell:840,  vol:500000  },
     { id:1619, name:'Uncut ruby',      buy:1300, sell:1460, vol:420000  },
@@ -889,31 +1077,25 @@ function loadMockData() {
     { id:1605, name:'Emerald',         buy:1550, sell:1750, vol:380000  },
     { id:1603, name:'Ruby',            buy:1800, sell:2050, vol:310000  },
     { id:1601, name:'Diamond',         buy:2700, sell:3050, vol:260000  },
-    // Arrows
     { id:882,  name:'Bronze arrows',   buy:2,    sell:4,    vol:25000000},
     { id:884,  name:'Iron arrows',     buy:4,    sell:6,    vol:18000000},
     { id:886,  name:'Steel arrows',    buy:22,   sell:28,   vol:8000000 },
     { id:888,  name:'Mithril arrows',  buy:52,   sell:64,   vol:4500000 },
     { id:890,  name:'Adamant arrows',  buy:110,  sell:132,  vol:3200000 },
     { id:892,  name:'Rune arrows',     buy:210,  sell:242,  vol:2100000 },
-    // Food
     { id:379,  name:'Raw lobster',     buy:230,  sell:260,  vol:2800000 },
     { id:380,  name:'Lobster',         buy:245,  sell:280,  vol:2600000 },
     { id:371,  name:'Raw swordfish',   buy:215,  sell:248,  vol:2200000 },
     { id:373,  name:'Swordfish',       buy:230,  sell:268,  vol:2000000 },
-    // Rune armour (lower vol but good profit per flip)
     { id:1163, name:'Rune full helm',  buy:21000,sell:24800,vol:45000   },
     { id:1127, name:'Rune platebody',  buy:37000,sell:40800,vol:38000   },
     { id:1079, name:'Rune platelegs',  buy:37500,sell:41200,vol:37000   },
     { id:1201, name:'Rune kiteshield', buy:32000,sell:35500,vol:28000   },
-    // Rune weapons
     { id:1289, name:'Rune scimitar',   buy:15000,sell:17200,vol:65000   },
     { id:1305, name:'Rune longsword',  buy:19000,sell:21500,vol:42000   },
     { id:1341, name:'Rune dagger',     buy:4700, sell:5400, vol:90000   },
-    // Jewellery
     { id:1625, name:'Gold necklace',   buy:210,  sell:290,  vol:650000  },
     { id:1627, name:'Gold ring',       buy:180,  sell:260,  vol:580000  },
-    // Staves
     { id:1381, name:'Staff of air',    buy:1450, sell:1680, vol:280000  },
     { id:1385, name:'Staff of fire',   buy:1500, sell:1720, vol:260000  },
   ];
@@ -924,38 +1106,64 @@ function loadMockData() {
     itemMapping[item.id] = { id: item.id, name: item.name };
   });
 
-  // Mock gem prices
   const mockGems = [
-    { uncut:1623, cut:1607 },
-    { uncut:1621, cut:1605 },
-    { uncut:1619, cut:1603 },
-    { uncut:1617, cut:1601 },
-    { uncut:1615, cut:1613 },
-    { uncut:6571, cut:6573 },
+    { uncut:1623, cut:1607 }, { uncut:1621, cut:1605 }, { uncut:1619, cut:1603 },
+    { uncut:1617, cut:1601 }, { uncut:1615, cut:1613 }, { uncut:6571, cut:6573 },
     { uncut:19496, cut:19493 },
   ];
   const gemPrices = [
-    { unc:520, cut:1050, uname:'Uncut sapphire', cname:'Sapphire' },
-    { unc:750, cut:1600, uname:'Uncut emerald', cname:'Emerald' },
-    { unc:1300, cut:1900, uname:'Uncut ruby', cname:'Ruby' },
-    { unc:2100, cut:2900, uname:'Uncut diamond', cname:'Diamond' },
-    { unc:11000, cut:13500, uname:'Uncut dragonstone', cname:'Dragonstone' },
-    { unc:2250000, cut:2650000, uname:'Onyx', cname:'Onyx' },
-    { unc:9500000, cut:13200000, uname:'Uncut zenyte', cname:'Zenyte' },
+    { unc:520,  cut:1050,    uname:'Uncut sapphire',   cname:'Sapphire' },
+    { unc:750,  cut:1600,    uname:'Uncut emerald',    cname:'Emerald' },
+    { unc:1300, cut:1900,    uname:'Uncut ruby',       cname:'Ruby' },
+    { unc:2100, cut:2900,    uname:'Uncut diamond',    cname:'Diamond' },
+    { unc:11000,cut:13500,   uname:'Uncut dragonstone',cname:'Dragonstone' },
+    { unc:2250000,cut:2650000,uname:'Onyx',            cname:'Onyx' },
+    { unc:9500000,cut:13200000,uname:'Uncut zenyte',   cname:'Zenyte' },
   ];
   gemPrices.forEach((g, i) => {
     allPrices[mockGems[i].uncut] = { high: g.unc+50, low: g.unc, highTime: Date.now()/1000, lowTime: Date.now()/1000 };
-    allPrices[mockGems[i].cut] = { high: g.cut+100, low: g.cut, highTime: Date.now()/1000, lowTime: Date.now()/1000 };
+    allPrices[mockGems[i].cut]   = { high: g.cut+100, low: g.cut, highTime: Date.now()/1000, lowTime: Date.now()/1000 };
     allVolumes[mockGems[i].uncut] = 50000;
-    allVolumes[mockGems[i].cut] = 80000;
+    allVolumes[mockGems[i].cut]   = 80000;
     itemMapping[mockGems[i].uncut] = { id: mockGems[i].uncut, name: g.uname };
-    itemMapping[mockGems[i].cut] = { id: mockGems[i].cut, name: g.cname };
+    itemMapping[mockGems[i].cut]   = { id: mockGems[i].cut,   name: g.cname };
+  });
+
+  // Mock jewellery output prices (covers all recipe outputIds)
+  const mockJewel = [
+    {id:1635, name:'Gold ring',          buy:85,  sell:150, vol:420000},
+    {id:1654, name:'Gold necklace',      buy:120, sell:195, vol:380000},
+    {id:11069,name:'Gold bracelet',      buy:100, sell:170, vol:310000},
+    {id:1673, name:'Gold amulet (u)',    buy:140, sell:220, vol:290000},
+    {id:1637, name:'Sapphire ring',      buy:940, sell:1090,vol:320000},
+    {id:1656, name:'Sapphire necklace',  buy:980, sell:1140,vol:290000},
+    {id:11072,name:'Sapphire bracelet',  buy:920, sell:1070,vol:250000},
+    {id:1675, name:'Sapphire amulet (u)',buy:900, sell:1060,vol:230000},
+    {id:1639, name:'Emerald ring',       buy:1460,sell:1680,vol:280000},
+    {id:1658, name:'Emerald necklace',   buy:1500,sell:1740,vol:260000},
+    {id:11076,name:'Emerald bracelet',   buy:1420,sell:1650,vol:220000},
+    {id:1677, name:'Emerald amulet (u)', buy:1400,sell:1640,vol:210000},
+    {id:1641, name:'Ruby ring',          buy:1750,sell:2020,vol:240000},
+    {id:1660, name:'Ruby necklace',      buy:1800,sell:2080,vol:220000},
+    {id:11078,name:'Ruby bracelet',      buy:1720,sell:1990,vol:200000},
+    {id:1679, name:'Ruby amulet (u)',    buy:1800,sell:2080,vol:190000},
+    {id:1643, name:'Diamond ring',       buy:2550,sell:2980,vol:200000},
+    {id:1662, name:'Diamond necklace',   buy:2700,sell:3150,vol:185000},
+    {id:11080,name:'Diamond bracelet',   buy:2600,sell:3030,vol:170000},
+    {id:1681, name:'Diamond amulet (u)', buy:2650,sell:3100,vol:160000},
+  ];
+  mockJewel.forEach(j => {
+    allPrices[j.id]  = { high: j.sell, low: j.buy, highTime: Date.now()/1000, lowTime: Date.now()/1000 };
+    allVolumes[j.id] = j.vol;
+    itemMapping[j.id] = { id: j.id, name: j.name };
   });
 
   processFlipData();
   processGemData();
+  processJewelleryData();
   renderFlip();
   renderGems();
+  renderJewellery();
   renderCharts();
   renderFlipStats();
   setStatus('connected', 'Using demonstration data (CORS limitation — see console)');
@@ -967,14 +1175,11 @@ function loadMockData() {
 // PROCESS DATA
 // ============================
 function applyTax(sellPrice) {
-  // 2% tax on sell, min 1gp, capped at 5M
   return Math.min(Math.floor(sellPrice * TAX), 5000000);
 }
 
 function processFlipData() {
   flipData = [];
-
-  // Scan ALL items in the price data for max coverage
   const idsToScan = new Set([
     ...Object.keys(allPrices).map(Number),
     ...F2P_ITEM_IDS,
@@ -994,9 +1199,6 @@ function processFlipData() {
     const name = itemMapping[id]?.name || `Item #${id}`;
     const isF2P = F2P_ITEM_IDS.has(id);
     const buyLimit = getBuyLimit(id);
-
-    // GP/day potential: profit per flip × min(volume, buyLimit×6) 
-    // (6 buy cycles possible per day at 4hr limit)
     const dailyCycles = 6;
     const effectiveVol = Math.min(volume, buyLimit * dailyCycles);
     const gpDay = profit > 0 ? Math.floor(profit * effectiveVol) : 0;
@@ -1006,9 +1208,56 @@ function processFlipData() {
     }
   }
 
-  // Default sort: GP/day descending (best money makers first)
   flipData.sort((a, b) => b.gpDay - a.gpDay);
   log(`Processed ${flipData.length} flip opportunities (${flipData.filter(f=>f.isF2P).length} F2P)`, 'success');
+}
+
+// FIX 5: Single processJewelleryData — uses components[] format matching JEWELLERY_RECIPES
+function processJewelleryData() {
+  jewelleryData = [];
+
+  for (const recipe of JEWELLERY_RECIPES) {
+    const outPrice = allPrices[recipe.outputId];
+    if (!outPrice) continue;
+    const sellPrice = outPrice.high || outPrice.low;
+    if (!sellPrice) continue;
+
+    let totalCost = 0;
+    const componentDetails = [];
+    let missingComp = false;
+
+    for (const comp of recipe.components) {
+      const compPrice = allPrices[comp.id];
+      if (!compPrice) { missingComp = true; break; }
+      const buyAt = compPrice.low || compPrice.high;
+      if (!buyAt) { missingComp = true; break; }
+      const cost = buyAt * comp.qty;
+      totalCost += cost;
+      componentDetails.push({ ...comp, buyAt, cost });
+    }
+    if (missingComp) continue;
+
+    const tax = applyTax(sellPrice);
+    const profit = sellPrice - totalCost - tax;
+    const roi = totalCost > 0 ? (profit / totalCost * 100) : 0;
+    const volume = allVolumes[recipe.outputId] || 0;
+    const gpHr = Math.round(profit * CRAFT_RATE_PER_HR);
+
+    jewelleryData.push({
+      ...recipe,
+      sellPrice,
+      totalCost,
+      tax,
+      profit,
+      roi,
+      volume,
+      gpHr,
+      componentDetails,
+    });
+  }
+
+  jewelleryData.sort((a, b) => b.profit - a.profit);
+  log(`Processed ${jewelleryData.length} jewellery recipes`, 'success');
 }
 
 function processGemData() {
@@ -1028,24 +1277,15 @@ function processGemData() {
     const profit = sellFor - buyCost - tax;
     const margin = buyCost > 0 ? ((profit / buyCost) * 100) : 0;
     const uncutVol = allVolumes[gem.uncut] || 0;
-    const cutVol = allVolumes[gem.cut] || 0;
+    const cutVol   = allVolumes[gem.cut]   || 0;
 
-    gemData.push({
-      ...gem,
-      buyCost,
-      sellFor,
-      tax,
-      profit,
-      margin,
-      uncutVol,
-      cutVol,
-    });
+    gemData.push({ ...gem, buyCost, sellFor, tax, profit, margin, uncutVol, cutVol });
   }
   log(`Processed ${gemData.length} gem pairs`, 'success');
 }
 
 // ============================
-// RENDER
+// RENDER HELPERS
 // ============================
 function fmtGP(n) {
   if (n === undefined || n === null) return '—';
@@ -1069,12 +1309,15 @@ function setStatus(state, msg) {
   document.getElementById('statusText').textContent = msg;
 }
 
-function switchTab(name) {
+// FIX 6: switchTab accepts evt parameter instead of relying on implicit global event
+function switchTab(name, evt) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  event.target.classList.add('active');
+  if (evt && evt.currentTarget) evt.currentTarget.classList.add('active');
+  else if (evt && evt.target) evt.target.classList.add('active');
   document.getElementById(`section-${name}`).classList.add('active');
   if (name === 'charts') renderCharts();
+  if (name === 'jewellery') renderJewellery();
 }
 
 function toggleF2P() {
@@ -1106,22 +1349,10 @@ function renderFlipStats() {
   const bestProfit = f2pItems.length ? Math.max(...f2pItems.map(f=>f.profit)) : 0;
 
   document.getElementById('flipStats').innerHTML = `
-    <div class="stat-card">
-      <div class="stat-label">F2P Items</div>
-      <div class="stat-val">${f2pItems.length}</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Best GP/Day</div>
-      <div class="stat-val green">${fmtGP(bestGpDay)}</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Best Profit/Flip</div>
-      <div class="stat-val">${fmtGP(bestProfit)}</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Total Items</div>
-      <div class="stat-val">${profitable}</div>
-    </div>
+    <div class="stat-card"><div class="stat-label">F2P Items</div><div class="stat-val">${f2pItems.length}</div></div>
+    <div class="stat-card"><div class="stat-label">Best GP/Day</div><div class="stat-val green">${fmtGP(bestGpDay)}</div></div>
+    <div class="stat-card"><div class="stat-label">Best Profit/Flip</div><div class="stat-val">${fmtGP(bestProfit)}</div></div>
+    <div class="stat-card"><div class="stat-label">Total Items</div><div class="stat-val">${profitable}</div></div>
   `;
 }
 
@@ -1131,8 +1362,6 @@ function renderFlip() {
   const sortKey = document.getElementById('sortFilter').value || flipSortKey;
 
   let data = [...flipData];
-
-  // F2P filter (default ON)
   if (showF2POnly) data = data.filter(f => f.isF2P);
   if (search) data = data.filter(f => f.name.toLowerCase().includes(search));
   if (typeFilter !== 'all') data = data.filter(f => f.type === typeFilter);
@@ -1167,29 +1396,27 @@ function renderFlip() {
 }
 
 // ============================
-// INLINE PRICE CHART
+// INLINE PRICE CHART (flip tab)
 // ============================
-const inlineCharts = {};   // itemId -> Chart instance
+const inlineCharts = {};
 let expandedItemId = null;
 
 function toggleItemChart(itemId, rowEl) {
   const existingRow = document.getElementById(`chart-row-${itemId}`);
   const arrow = document.getElementById(`arrow-${itemId}`);
 
-  // Close any open chart first
   if (expandedItemId && expandedItemId !== itemId) {
     const oldRow = document.getElementById(`chart-row-${expandedItemId}`);
     const oldArrow = document.getElementById(`arrow-${expandedItemId}`);
     const oldItemRow = document.getElementById(`row-${expandedItemId}`);
     if (oldRow) oldRow.remove();
-    if (oldArrow) { oldArrow.classList.remove('open'); }
+    if (oldArrow) oldArrow.classList.remove('open');
     if (oldItemRow) oldItemRow.classList.remove('expanded');
     if (inlineCharts[expandedItemId]) { inlineCharts[expandedItemId].destroy(); delete inlineCharts[expandedItemId]; }
     expandedItemId = null;
   }
 
   if (existingRow) {
-    // Toggle off
     existingRow.remove();
     arrow.classList.remove('open');
     rowEl.classList.remove('expanded');
@@ -1198,18 +1425,16 @@ function toggleItemChart(itemId, rowEl) {
     return;
   }
 
-  // Insert chart row after the clicked row
   arrow.classList.add('open');
   rowEl.classList.add('expanded');
   expandedItemId = itemId;
 
   const item = flipData.find(f => f.id === itemId);
-  const colCount = 8;
   const chartRow = document.createElement('tr');
   chartRow.id = `chart-row-${itemId}`;
   chartRow.className = 'price-chart-row';
   chartRow.innerHTML = `
-    <td colspan="${colCount}">
+    <td colspan="8">
       <div class="price-chart-wrap">
         <div class="price-chart-header">
           <div>
@@ -1226,15 +1451,11 @@ function toggleItemChart(itemId, rowEl) {
               <button class="ts-btn active" onclick="loadPriceChart(${itemId},'6h',this,event)">6h</button>
               <button class="ts-btn" onclick="loadPriceChart(${itemId},'24h',this,event)">24h</button>
             </div>
-            <div class="price-chart-meta" id="meta-${itemId}">
-              <span class="pcm-gap">Loading...</span>
-            </div>
+            <div class="price-chart-meta" id="meta-${itemId}"><span class="pcm-gap">Loading...</span></div>
           </div>
         </div>
         <div class="price-chart-canvas-wrap">
-          <div class="price-chart-loading" id="chart-loading-${itemId}">
-            <div class="spinner"></div> Fetching price history...
-          </div>
+          <div class="price-chart-loading" id="chart-loading-${itemId}"><div class="spinner"></div> Fetching price history...</div>
           <canvas id="price-canvas-${itemId}" style="display:none"></canvas>
         </div>
       </div>
@@ -1246,8 +1467,6 @@ function toggleItemChart(itemId, rowEl) {
 
 async function loadPriceChart(itemId, timestep, btnEl, evt) {
   if (evt) evt.stopPropagation();
-
-  // Update active button
   const container = document.getElementById(`ts-btns-${itemId}`);
   if (container) container.querySelectorAll('.ts-btn').forEach(b => b.classList.remove('active'));
   if (btnEl) btnEl.classList.add('active');
@@ -1255,13 +1474,10 @@ async function loadPriceChart(itemId, timestep, btnEl, evt) {
   const loadingEl = document.getElementById(`chart-loading-${itemId}`);
   const canvasEl  = document.getElementById(`price-canvas-${itemId}`);
   const metaEl    = document.getElementById(`meta-${itemId}`);
-
   if (!canvasEl) return;
 
   if (loadingEl) loadingEl.style.display = 'flex';
   canvasEl.style.display = 'none';
-
-  // Destroy old chart instance if exists
   if (inlineCharts[itemId]) { inlineCharts[itemId].destroy(); delete inlineCharts[itemId]; }
 
   try {
@@ -1273,7 +1489,6 @@ async function loadPriceChart(itemId, timestep, btnEl, evt) {
     const series = json.data || [];
     if (!series.length) throw new Error('No data returned');
 
-    // Filter to last 7 days
     const sevenDaysAgo = (Date.now() / 1000) - (7 * 24 * 3600);
     const filtered = series.filter(p => p.timestamp >= sevenDaysAgo);
     const pts = filtered.length > 0 ? filtered : series.slice(-200);
@@ -1286,7 +1501,6 @@ async function loadPriceChart(itemId, timestep, btnEl, evt) {
     const highPrices = pts.map(p => p.avgHighPrice || null);
     const lowPrices  = pts.map(p => p.avgLowPrice  || null);
 
-    // Compute meta stats
     const validHigh = highPrices.filter(Boolean);
     const validLow  = lowPrices.filter(Boolean);
     const avgHigh = validHigh.length ? Math.round(validHigh.reduce((a,b)=>a+b,0)/validHigh.length) : null;
@@ -1313,74 +1527,32 @@ async function loadPriceChart(itemId, timestep, btnEl, evt) {
       data: {
         labels,
         datasets: [
-          {
-            label: 'Sell price',
-            data: highPrices,
-            borderColor: '#e8a020',
-            backgroundColor: 'rgba(232,160,32,0.08)',
-            borderWidth: 1.5,
-            pointRadius: 0,
-            pointHoverRadius: 4,
-            tension: 0.2,
-            fill: false,
-            spanGaps: true,
-          },
-          {
-            label: 'Buy price',
-            data: lowPrices,
-            borderColor: '#4caf7a',
-            backgroundColor: 'rgba(76,175,122,0.08)',
-            borderWidth: 1.5,
-            pointRadius: 0,
-            pointHoverRadius: 4,
-            tension: 0.2,
-            fill: '+1',
-            spanGaps: true,
-          },
+          { label:'Sell price', data:highPrices, borderColor:'#e8a020', backgroundColor:'rgba(232,160,32,0.08)', borderWidth:1.5, pointRadius:0, pointHoverRadius:4, tension:0.2, fill:false, spanGaps:true },
+          { label:'Buy price',  data:lowPrices,  borderColor:'#4caf7a', backgroundColor:'rgba(76,175,122,0.08)',  borderWidth:1.5, pointRadius:0, pointHoverRadius:4, tension:0.2, fill:'+1', spanGaps:true },
         ]
       },
       options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        interaction: { mode: 'index', intersect: false },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: 'rgba(14,11,8,0.95)',
-            borderColor: '#3d3020',
-            borderWidth: 1,
-            titleColor: '#c9a227',
-            bodyColor: '#d4c5a9',
-            callbacks: {
+        responsive:true, maintainAspectRatio:false,
+        interaction:{mode:'index',intersect:false},
+        plugins:{
+          legend:{display:false},
+          tooltip:{
+            backgroundColor:'rgba(14,11,8,0.95)',borderColor:'#3d3020',borderWidth:1,
+            titleColor:'#c9a227',bodyColor:'#d4c5a9',
+            callbacks:{
               title: items => items[0].label,
               label: ctx => ` ${ctx.dataset.label}: ${fmtGP(ctx.raw)} gp`,
               afterBody: items => {
-                const h = items.find(i => i.dataset.label === 'Sell price')?.raw;
-                const l = items.find(i => i.dataset.label === 'Buy price')?.raw;
-                if (h && l) return [` Margin: ${fmtGP(h - l)} gp`];
-                return [];
+                const h=items.find(i=>i.dataset.label==='Sell price')?.raw;
+                const l=items.find(i=>i.dataset.label==='Buy price')?.raw;
+                return h&&l ? [` Margin: ${fmtGP(h-l)} gp`] : [];
               }
             }
           }
         },
-        scales: {
-          x: {
-            ticks: {
-              maxTicksLimit: 8,
-              maxRotation: 0,
-              font: { size: 10 },
-              color: '#7a6e5c',
-              callback: function(val, idx) {
-                const lbl = this.getLabelForValue(val);
-                return lbl ? lbl.split(' ').slice(0,2).join(' ') : '';
-              }
-            },
-            grid: { color: 'rgba(61,48,32,0.4)' }
-          },
-          y: {
-            ticks: { callback: v => fmtGP(v), color: '#7a6e5c', font: { size: 10 } },
-            grid: { color: 'rgba(61,48,32,0.4)' },
-          }
+        scales:{
+          x:{ticks:{maxTicksLimit:8,maxRotation:0,font:{size:10},color:'#7a6e5c',callback:function(v){const l=this.getLabelForValue(v);return l?l.split(' ').slice(0,2).join(' '):''}},grid:{color:'rgba(61,48,32,0.4)'}},
+          y:{ticks:{callback:v=>fmtGP(v),color:'#7a6e5c',font:{size:10}},grid:{color:'rgba(61,48,32,0.4)'}}
         }
       }
     });
@@ -1389,7 +1561,6 @@ async function loadPriceChart(itemId, timestep, btnEl, evt) {
   } catch(e) {
     log(`Price chart error for item ${itemId}: ${e.message}`, 'error');
     if (loadingEl) loadingEl.innerHTML = `<span style="color:var(--red)">⚠ Could not load price history — ${e.message}</span>`;
-    // Show mock chart for demo
     showMockPriceChart(itemId, canvasEl, loadingEl, metaEl);
   }
 }
@@ -1430,40 +1601,359 @@ function showMockPriceChart(itemId, canvasEl, loadingEl, metaEl) {
 
   const ctx = canvasEl.getContext('2d');
   inlineCharts[itemId] = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        { label:'Sell price', data:highs, borderColor:'#e8a020', backgroundColor:'rgba(232,160,32,0.08)', borderWidth:1.5, pointRadius:0, pointHoverRadius:4, tension:0.3, fill:false, spanGaps:true },
-        { label:'Buy price',  data:lows,  borderColor:'#4caf7a', backgroundColor:'rgba(76,175,122,0.08)',  borderWidth:1.5, pointRadius:0, pointHoverRadius:4, tension:0.3, fill:'+1', spanGaps:true },
-      ]
-    },
-    options: {
-      responsive:true, maintainAspectRatio:false,
-      interaction:{mode:'index',intersect:false},
-      plugins:{
-        legend:{display:false},
-        tooltip:{
-          backgroundColor:'rgba(14,11,8,0.95)',borderColor:'#3d3020',borderWidth:1,
-          titleColor:'#c9a227',bodyColor:'#d4c5a9',
-          callbacks:{
-            label: ctx => ` ${ctx.dataset.label}: ${fmtGP(ctx.raw)} gp`,
-            afterBody: items => {
-              const h=items.find(i=>i.dataset.label==='Sell price')?.raw;
-              const l=items.find(i=>i.dataset.label==='Buy price')?.raw;
-              return h&&l ? [` Margin: ${fmtGP(h-l)} gp`] : [];
-            }
-          }
-        }
-      },
-      scales:{
-        x:{ticks:{maxTicksLimit:8,maxRotation:0,font:{size:10},color:'#7a6e5c',callback:function(v){const l=this.getLabelForValue(v);return l?l.split(' ').slice(0,2).join(' '):''}},grid:{color:'rgba(61,48,32,0.4)'}},
-        y:{ticks:{callback:v=>fmtGP(v),color:'#7a6e5c',font:{size:10}},grid:{color:'rgba(61,48,32,0.4)'}}
-      }
+    type:'line',
+    data:{ labels, datasets:[
+      { label:'Sell price', data:highs, borderColor:'#e8a020', backgroundColor:'rgba(232,160,32,0.08)', borderWidth:1.5, pointRadius:0, pointHoverRadius:4, tension:0.3, fill:false, spanGaps:true },
+      { label:'Buy price',  data:lows,  borderColor:'#4caf7a', backgroundColor:'rgba(76,175,122,0.08)',  borderWidth:1.5, pointRadius:0, pointHoverRadius:4, tension:0.3, fill:'+1', spanGaps:true },
+    ]},
+    options:{
+      responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(14,11,8,0.95)',borderColor:'#3d3020',borderWidth:1,titleColor:'#c9a227',bodyColor:'#d4c5a9',callbacks:{label:ctx=>` ${ctx.dataset.label}: ${fmtGP(ctx.raw)} gp`,afterBody:items=>{const h=items.find(i=>i.dataset.label==='Sell price')?.raw;const l=items.find(i=>i.dataset.label==='Buy price')?.raw;return h&&l?[` Margin: ${fmtGP(h-l)} gp`]:[];}}}},
+      scales:{x:{ticks:{maxTicksLimit:8,maxRotation:0,font:{size:10},color:'#7a6e5c',callback:function(v){const l=this.getLabelForValue(v);return l?l.split(' ').slice(0,2).join(' '):''}},grid:{color:'rgba(61,48,32,0.4)'}},y:{ticks:{callback:v=>fmtGP(v),color:'#7a6e5c',font:{size:10}},grid:{color:'rgba(61,48,32,0.4)'}}}
     }
   });
 }
 
+// ============================
+// RENDER JEWELLERY
+// FIX 7: Uses jewelStats, jewelSearch, jewelSort, jewelType, jewelBody, jewelCount
+// (matching the single HTML section above)
+// ============================
+function renderJewellery() {
+  const search = (document.getElementById('jewelSearch')?.value || '').toLowerCase();
+  const sort   = document.getElementById('jewelSort')?.value || 'profit';
+  const type   = document.getElementById('jewelType')?.value || 'all';
+
+  let data = [...jewelleryData];
+  if (search) data = data.filter(j => j.name.toLowerCase().includes(search));
+  if (type !== 'all') data = data.filter(j => j.type === type);
+
+  const sortMap = { profit:'profit', roi:'roi', gphr:'gpHr', volume:'volume' };
+  data.sort((a,b) => b[sortMap[sort]||'profit'] - a[sortMap[sort]||'profit']);
+
+  // Stats
+  const bestProfit = data.length ? Math.max(...data.map(d=>d.profit)) : 0;
+  const bestGpHr   = data.length ? Math.max(...data.map(d=>d.gpHr))   : 0;
+  const profitable = data.filter(d=>d.profit>0).length;
+
+  const statsEl = document.getElementById('jewelStats');
+  if (statsEl) {
+    statsEl.innerHTML = `
+      <div class="stat-card"><div class="stat-label">Recipes</div><div class="stat-val">${data.length}</div></div>
+      <div class="stat-card"><div class="stat-label">Profitable</div><div class="stat-val green">${profitable}</div></div>
+      <div class="stat-card"><div class="stat-label">Best Profit/Item</div><div class="stat-val">${fmtGP(bestProfit)} gp</div></div>
+      <div class="stat-card"><div class="stat-label">Best GP/Hr</div><div class="stat-val green">${fmtGP(bestGpHr)}</div></div>
+    `;
+  }
+
+  const countEl = document.getElementById('jewelCount');
+  if (countEl) countEl.textContent = `${data.length} recipes`;
+
+  const tbody = document.getElementById('jewelBody');
+  if (!tbody) return;
+  if (!data.length) {
+    tbody.innerHTML = '<tr><td colspan="11"><div class="empty">No recipes match your filters</div></td></tr>';
+    return;
+  }
+
+  const maxProfit = Math.max(...data.map(d=>Math.abs(d.profit)), 1);
+
+  tbody.innerHTML = data.map(j => {
+    const pClass = j.profit > 500 ? 'jewel-profit-high' : j.profit > 0 ? 'jewel-profit-mid' : j.profit < 0 ? 'jewel-profit-neg' : 'jewel-profit-low';
+    const barW   = Math.min(100, Math.abs(j.profit) / maxProfit * 100).toFixed(1);
+    const barCol = j.profit > 0 ? '#4caf7a' : '#c0392b';
+
+    const compHtml = j.componentDetails.map((c,i) => `
+      ${i > 0 ? '<span class="recipe-plus">+</span>' : ''}
+      <span class="recipe-item" title="${c.name} @ ${fmtGP(c.buyAt)} gp each">
+        ${c.name} <span class="recipe-cost">${fmtGP(c.buyAt)}</span>
+      </span>
+    `).join('');
+
+    return `
+    <tr class="item-row" id="jrow-${j.outputId}" onclick="toggleJewDetail(${j.outputId}, this)">
+      <td>
+        <div style="display:flex;align-items:center;gap:5px">
+          <span style="font-size:18px;line-height:1">${j.emoji}</span>
+          <div>
+            <div style="color:var(--text-bright);font-size:13px">${j.name}<span class="expand-arrow" id="jarrow-${j.outputId}">▶</span></div>
+            <div class="profit-bar-wrap"><div class="profit-bar" style="width:${barW}%;background:${barCol}"></div></div>
+          </div>
+        </div>
+      </td>
+      <td><span class="craft-badge">${j.type.toUpperCase()}</span></td>
+      <td><span class="lvl-badge">${j.craftLvl}</span></td>
+      <td>
+        <div class="recipe-breakdown">
+          ${compHtml}
+          <span class="recipe-arrow">→</span>
+          <span class="recipe-item"><span style="color:var(--text-bright)">${j.name.replace(' (u)','')}</span></span>
+        </div>
+      </td>
+      <td class="recipe-cost">${fmtGP(j.totalCost)} <span class="gp">gp</span></td>
+      <td class="recipe-sell">${fmtGP(j.sellPrice)} <span class="gp">gp</span></td>
+      <td style="color:var(--red);font-size:12px">-${fmtGP(j.tax)}</td>
+      <td class="${pClass}">${fmtGP(j.profit)} <span class="gp">gp</span></td>
+      <td class="${j.roi > 5 ? 'profit-high' : j.roi > 0 ? 'profit-mid' : 'profit-neg'}">${j.roi.toFixed(1)}%</td>
+      <td class="${j.gpHr > 200000 ? 'profit-high' : j.gpHr > 0 ? 'profit-mid' : 'profit-neg'}">${fmtGP(j.gpHr)}</td>
+      <td style="color:var(--text-dim)">${fmtGP(j.volume)}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ============================
+// JEWELLERY ROW EXPANSION (detail + chart)
+// ============================
+let expandedJewId = null;
+const jewCharts = {};
+
+function toggleJewDetail(outputId, rowEl) {
+  const existingRow = document.getElementById(`jdet-row-${outputId}`);
+  const arrow = document.getElementById(`jarrow-${outputId}`);
+
+  if (expandedJewId && expandedJewId !== outputId) {
+    const oldRow = document.getElementById(`jdet-row-${expandedJewId}`);
+    const oldArrow = document.getElementById(`jarrow-${expandedJewId}`);
+    const oldItemRow = document.getElementById(`jrow-${expandedJewId}`);
+    if (oldRow) oldRow.remove();
+    if (oldArrow) oldArrow.classList.remove('open');
+    if (oldItemRow) oldItemRow.classList.remove('expanded');
+    if (jewCharts[expandedJewId]) { jewCharts[expandedJewId].destroy(); delete jewCharts[expandedJewId]; }
+    expandedJewId = null;
+  }
+
+  if (existingRow) {
+    existingRow.remove();
+    arrow.classList.remove('open');
+    rowEl.classList.remove('expanded');
+    if (jewCharts[outputId]) { jewCharts[outputId].destroy(); delete jewCharts[outputId]; }
+    expandedJewId = null;
+    return;
+  }
+
+  arrow.classList.add('open');
+  rowEl.classList.add('expanded');
+  expandedJewId = outputId;
+
+  const recipe = jewelleryData.find(j => j.outputId === outputId);
+  if (!recipe) return;
+
+  const chartRow = document.createElement('tr');
+  chartRow.id = `jdet-row-${outputId}`;
+  chartRow.className = 'jew-detail-row';
+  chartRow.innerHTML = `
+    <td colspan="11">
+      <div class="jew-detail-wrap">
+        <div class="price-chart-header" style="margin-bottom:10px">
+          <div class="price-chart-title">💍 ${recipe.name} — Cost Breakdown &amp; Price History</div>
+          <div class="price-chart-timestep" id="jts-${outputId}">
+            <button class="ts-btn" onclick="loadJewChart(${outputId},'5m',this,event)">5m</button>
+            <button class="ts-btn" onclick="loadJewChart(${outputId},'1h',this,event)">1h</button>
+            <button class="ts-btn active" onclick="loadJewChart(${outputId},'6h',this,event)">6h</button>
+            <button class="ts-btn" onclick="loadJewChart(${outputId},'24h',this,event)">24h</button>
+          </div>
+        </div>
+        <div class="jew-detail-grid">
+          <div class="jew-breakdown">
+            <div class="jew-breakdown-title">📦 Cost Breakdown</div>
+            ${recipe.componentDetails.map(c=>`<div class="jb-row"><span class="jb-label">${c.name}</span><span class="jb-val">${fmtGP(c.buyAt)} gp × ${c.qty}</span></div>`).join('')}
+            <div class="jb-row"><span class="jb-total-label">Total input cost</span><span class="jb-val">${fmtGP(recipe.totalCost)} gp</span></div>
+          </div>
+          <div class="jew-breakdown">
+            <div class="jew-breakdown-title">💰 Revenue</div>
+            <div class="jb-row"><span class="jb-label">Sell price</span><span class="jb-val">${fmtGP(recipe.sellPrice)} gp</span></div>
+            <div class="jb-row"><span class="jb-label" style="color:var(--red)">GE Tax (2%)</span><span class="jb-val" style="color:var(--red)">−${fmtGP(recipe.tax)} gp</span></div>
+            <div class="jb-row" style="margin-top:4px;padding-top:6px;border-top:1px solid var(--border-gold)">
+              <span class="jb-total-label" style="font-weight:600">Profit per item</span>
+              <span class="${recipe.profit >= 0 ? 'jb-profit-pos' : 'jb-profit-neg'}">${recipe.profit >= 0 ? '+' : ''}${fmtGP(recipe.profit)} gp</span>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;flex-wrap:wrap;gap:6px">
+            <div class="price-chart-legend">
+              <span><span class="pcl-dot" style="background:#e8a020"></span>Jewellery sell</span>
+              <span><span class="pcl-dot" style="background:#4caf7a"></span>Profit/item</span>
+              <span><span class="pcl-dot" style="background:#c9a227"></span>Components</span>
+            </div>
+            <div class="price-chart-meta" id="jmeta-${outputId}"><span class="pcm-gap">Loading...</span></div>
+          </div>
+          <div class="price-chart-canvas-wrap">
+            <div class="price-chart-loading" id="jloading-${outputId}"><div class="spinner"></div> Loading price history...</div>
+            <canvas id="jcanvas-${outputId}" style="display:none"></canvas>
+          </div>
+        </div>
+      </div>
+    </td>
+  `;
+  rowEl.after(chartRow);
+  loadJewChart(outputId, '6h', document.querySelector(`#jts-${outputId} .ts-btn.active`));
+}
+
+async function loadJewChart(outputId, timestep, btnEl, evt) {
+  if (evt) evt.stopPropagation();
+  const container = document.getElementById(`jts-${outputId}`);
+  if (container) container.querySelectorAll('.ts-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+
+  const recipe    = jewelleryData.find(j => j.outputId === outputId);
+  if (!recipe) return;
+  const loadingEl = document.getElementById(`jloading-${outputId}`);
+  const canvasEl  = document.getElementById(`jcanvas-${outputId}`);
+  const metaEl    = document.getElementById(`jmeta-${outputId}`);
+  if (!canvasEl) return;
+
+  if (loadingEl) loadingEl.style.display = 'flex';
+  canvasEl.style.display = 'none';
+  if (jewCharts[outputId]) { jewCharts[outputId].destroy(); delete jewCharts[outputId]; }
+
+  try {
+    const sevenDaysAgo = Date.now()/1000 - 7*24*3600;
+    const fetchSeries = async (id) => {
+      const url = `${PROXY}/timeseries?timestep=${timestep}&id=${id}`;
+      const res = await fetch(url, { headers: {'User-Agent':'OSRS-GE-Tool/1.0'} });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      const pts = (json.data||[]).filter(p => p.timestamp >= sevenDaysAgo);
+      return pts.length > 0 ? pts : (json.data||[]).slice(-200);
+    };
+
+    // Fetch output + all component items
+    const compIds = recipe.components.map(c => c.id);
+    const [outSeries, ...compSeries] = await Promise.all([
+      fetchSeries(outputId),
+      ...compIds.map(id => fetchSeries(id)),
+    ]);
+
+    const labels    = outSeries.map(p => {
+      const d = new Date(p.timestamp * 1000);
+      return d.toLocaleDateString('en-GB',{month:'short',day:'numeric'}) + ' ' +
+             d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
+    });
+    const outHighs  = outSeries.map(p => p.avgHighPrice || null);
+
+    const interp = (series, ts) => {
+      if (!series.length) return null;
+      const c = series.reduce((b,p) => Math.abs(p.timestamp-ts)<Math.abs(b.timestamp-ts)?p:b);
+      return c.avgLowPrice || c.avgHighPrice || null;
+    };
+
+    // Sum component costs at each timepoint
+    const compCosts = outSeries.map((p, _) => {
+      return recipe.components.reduce((sum, comp, ci) => {
+        const v = interp(compSeries[ci] || [], p.timestamp);
+        return sum + (v ? v * comp.qty : 0);
+      }, 0);
+    });
+
+    const profitLine = outSeries.map((p, i) => {
+      const sell = outHighs[i];
+      const cost = compCosts[i];
+      if (!sell || !cost) return null;
+      const tax = Math.min(Math.floor(sell * TAX), 5000000);
+      return sell - cost - tax;
+    });
+
+    const validP = profitLine.filter(x => x != null);
+    const avgP   = validP.length ? Math.round(validP.reduce((a,b)=>a+b,0)/validP.length) : null;
+    const latestSell = outHighs.filter(Boolean).slice(-1)[0];
+
+    if (metaEl) metaEl.innerHTML = `
+      <span class="pcm-sell">Latest sell: ${fmtGP(latestSell)} gp</span>
+      <span class="pcm-gap">Avg profit: ${fmtGP(avgP)} gp</span>
+    `;
+
+    if (loadingEl) loadingEl.style.display = 'none';
+    canvasEl.style.display = 'block';
+
+    const compColors = ['#c9a227','#4a9eca','#9b59b6','#e74c3c'];
+    const datasets = [
+      { label:'Jewellery sell', data:outHighs, borderColor:'#e8a020', backgroundColor:'rgba(232,160,32,0.07)', borderWidth:1.8, pointRadius:0, tension:0.2, fill:false, spanGaps:true, yAxisID:'y' },
+      { label:'Profit/item',    data:profitLine, borderColor:avgP>0?'#4caf7a':'#c0392b', backgroundColor:'rgba(76,175,122,0.07)', borderWidth:1.5, borderDash:[4,3], pointRadius:0, tension:0.2, fill:false, spanGaps:true, yAxisID:'y2' },
+      ...recipe.components.map((comp, ci) => ({
+        label: comp.name + ' buy',
+        data: outSeries.map(p => interp(compSeries[ci]||[], p.timestamp)),
+        borderColor: compColors[ci % compColors.length],
+        backgroundColor: 'transparent',
+        borderWidth: 1,
+        borderDash: [2,4],
+        pointRadius: 0,
+        tension: 0.2,
+        fill: false,
+        spanGaps: true,
+        yAxisID: 'y',
+      })),
+    ];
+
+    const ctx = canvasEl.getContext('2d');
+    jewCharts[outputId] = new Chart(ctx, {
+      type:'line', data:{ labels, datasets },
+      options:{
+        responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
+        plugins:{
+          legend:{ display:true, position:'top', labels:{boxWidth:12,font:{size:10},color:'#d4c5a9'} },
+          tooltip:{ backgroundColor:'rgba(14,11,8,0.95)', borderColor:'#3d3020', borderWidth:1, titleColor:'#c9a227', bodyColor:'#d4c5a9', callbacks:{label:c=>` ${c.dataset.label}: ${fmtGP(c.raw)} gp`} }
+        },
+        scales:{
+          x:{ ticks:{maxTicksLimit:8,maxRotation:0,font:{size:10},color:'#7a6e5c',callback:function(v){const l=this.getLabelForValue(v);return l?l.split(' ').slice(0,2).join(' '):''}}, grid:{color:'rgba(61,48,32,0.4)'} },
+          y:{ ticks:{callback:v=>fmtGP(v),color:'#7a6e5c',font:{size:10}}, grid:{color:'rgba(61,48,32,0.4)'}, title:{display:true,text:'Price (gp)',color:'#7a6e5c',font:{size:10}} },
+          y2:{ position:'right', ticks:{callback:v=>fmtGP(v),color:'#4caf7a',font:{size:10}}, grid:{drawOnChartArea:false}, title:{display:true,text:'Profit/item',color:'#4caf7a',font:{size:10}} }
+        }
+      }
+    });
+    log(`Jewellery chart loaded for ${recipe.name}`, 'success');
+
+  } catch(e) {
+    log(`Jewellery chart error: ${e.message}`, 'error');
+    showMockJewChart(outputId, recipe, canvasEl, loadingEl, metaEl);
+  }
+}
+
+function showMockJewChart(outputId, recipe, canvasEl, loadingEl, metaEl) {
+  if (!canvasEl) return;
+  const pts = 168;
+  const now = Date.now();
+  const baseOut  = recipe.sellPrice  || 2000;
+  const baseCost = recipe.totalCost  || 200;
+
+  const labels = [], outH = [], profL = [], costL = [];
+  for (let i = pts; i >= 0; i--) {
+    const t = new Date(now - i * 3600 * 1000);
+    labels.push(t.toLocaleDateString('en-GB',{month:'short',day:'numeric'}) + ' ' + t.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'}));
+    const nOut  = (Math.random()-0.5)*baseOut*0.06  + Math.sin(i/20)*baseOut*0.03;
+    const nCost = (Math.random()-0.5)*baseCost*0.08 + Math.sin(i/28)*baseCost*0.04;
+    const sv = Math.round(baseOut  + nOut);
+    const cv = Math.round(baseCost + nCost);
+    const tax = Math.min(Math.floor(sv * TAX), 5000000);
+    outH.push(sv);
+    costL.push(cv);
+    profL.push(sv - cv - tax);
+  }
+
+  if (loadingEl) loadingEl.style.display = 'none';
+  canvasEl.style.display = 'block';
+  const avgP = Math.round(profL.reduce((a,b)=>a+b,0)/profL.length);
+  if (metaEl) metaEl.innerHTML = `<span class="pcm-sell">Latest sell: ${fmtGP(outH.at(-1))} gp</span><span class="pcm-gap">Avg profit: ${fmtGP(avgP)} gp</span><span style="color:var(--gold-dim);font-style:italic"> ★ demo</span>`;
+
+  const ctx = canvasEl.getContext('2d');
+  jewCharts[outputId] = new Chart(ctx, {
+    type:'line',
+    data:{ labels, datasets:[
+      { label:'Jewellery sell', data:outH,  borderColor:'#e8a020', backgroundColor:'rgba(232,160,32,0.07)', borderWidth:1.8, pointRadius:0, tension:0.3, fill:false, spanGaps:true, yAxisID:'y' },
+      { label:'Profit/item',   data:profL, borderColor:avgP>0?'#4caf7a':'#c0392b', backgroundColor:'rgba(76,175,122,0.07)', borderWidth:1.5, borderDash:[4,3], pointRadius:0, tension:0.3, fill:false, spanGaps:true, yAxisID:'y2' },
+      { label:'Component cost',data:costL, borderColor:'#c9a227', backgroundColor:'transparent', borderWidth:1, borderDash:[2,4], pointRadius:0, tension:0.3, fill:false, spanGaps:true, yAxisID:'y' },
+    ]},
+    options:{
+      responsive:true, maintainAspectRatio:false, interaction:{mode:'index',intersect:false},
+      plugins:{legend:{display:true,position:'top',labels:{boxWidth:12,font:{size:10},color:'#d4c5a9'}},tooltip:{backgroundColor:'rgba(14,11,8,0.95)',borderColor:'#3d3020',borderWidth:1,titleColor:'#c9a227',bodyColor:'#d4c5a9',callbacks:{label:c=>` ${c.dataset.label}: ${fmtGP(c.raw)} gp`}}},
+      scales:{x:{ticks:{maxTicksLimit:8,maxRotation:0,font:{size:10},color:'#7a6e5c',callback:function(v){const l=this.getLabelForValue(v);return l?l.split(' ').slice(0,2).join(' '):''}},grid:{color:'rgba(61,48,32,0.4)'}},y:{ticks:{callback:v=>fmtGP(v),color:'#7a6e5c',font:{size:10}},grid:{color:'rgba(61,48,32,0.4)'},title:{display:true,text:'Price (gp)',color:'#7a6e5c',font:{size:10}}},y2:{position:'right',ticks:{callback:v=>fmtGP(v),color:'#4caf7a',font:{size:10}},grid:{drawOnChartArea:false},title:{display:true,text:'Profit/item',color:'#4caf7a',font:{size:10}}}}
+    }
+  });
+}
+
+// ============================
+// RENDER GEMS
+// ============================
 function renderGems() {
   const grid = document.getElementById('gemsGrid');
   if (!gemData.length) {
@@ -1486,26 +1976,11 @@ function renderGems() {
         </div>
       </div>
       <div class="gem-card-body">
-        <div class="gem-row">
-          <span class="gem-label">Buy (uncut)</span>
-          <span class="gem-val">${fmtGP(g.buyCost)} gp</span>
-        </div>
-        <div class="gem-row">
-          <span class="gem-label">Sell (cut)</span>
-          <span class="gem-val">${fmtGP(g.sellFor)} gp</span>
-        </div>
-        <div class="gem-row">
-          <span class="gem-label">GE Tax (2%)</span>
-          <span class="gem-val" style="color:var(--red)">-${fmtGP(g.tax)} gp</span>
-        </div>
-        <div class="gem-row">
-          <span class="gem-label">Margin</span>
-          <span class="gem-val">${g.margin.toFixed(1)}%</span>
-        </div>
-        <div class="gem-row">
-          <span class="gem-label">Uncut vol/day</span>
-          <span class="gem-val">${fmtGP(g.uncutVol)}</span>
-        </div>
+        <div class="gem-row"><span class="gem-label">Buy (uncut)</span><span class="gem-val">${fmtGP(g.buyCost)} gp</span></div>
+        <div class="gem-row"><span class="gem-label">Sell (cut)</span><span class="gem-val">${fmtGP(g.sellFor)} gp</span></div>
+        <div class="gem-row"><span class="gem-label">GE Tax (2%)</span><span class="gem-val" style="color:var(--red)">-${fmtGP(g.tax)} gp</span></div>
+        <div class="gem-row"><span class="gem-label">Margin</span><span class="gem-val">${g.margin.toFixed(1)}%</span></div>
+        <div class="gem-row"><span class="gem-label">Uncut vol/day</span><span class="gem-val">${fmtGP(g.uncutVol)}</span></div>
         <div class="${g.profit > 0 ? 'gem-profit-banner' : 'gem-profit-banner negative'}">
           ${g.profit > 0 ? '▲' : '▼'} ${fmtGP(Math.abs(g.profit))} gp per gem ${g.profit > 0 ? 'profit' : 'loss'}
         </div>
@@ -1514,6 +1989,9 @@ function renderGems() {
   `).join('');
 }
 
+// ============================
+// RENDER CHARTS
+// ============================
 function renderCharts() {
   const topFlips = [...flipData].filter(f => f.isF2P).sort((a,b) => b.gpDay - a.gpDay).slice(0, 12);
   const goldColor = '#c9a227';
@@ -1523,122 +2001,65 @@ function renderCharts() {
   Chart.defaults.color = '#d4c5a9';
   Chart.defaults.font.family = "'Crimson Pro', serif";
 
-  // Chart 1: Top F2P flips by GP/Day
   if (charts.flip) charts.flip.destroy();
   const ctx1 = document.getElementById('chartFlip').getContext('2d');
   charts.flip = new Chart(ctx1, {
-    type: 'bar',
-    data: {
+    type:'bar',
+    data:{
       labels: topFlips.map(f => f.name.length > 18 ? f.name.slice(0,16)+'…' : f.name),
-      datasets: [
-        {
-          label: 'GP/Day Potential',
-          data: topFlips.map(f => f.gpDay),
-          backgroundColor: 'rgba(201,162,39,0.6)',
-          borderColor: goldColor,
-          borderWidth: 1,
-          borderRadius: 2,
-          yAxisID: 'y',
-        },
-        {
-          label: 'Profit/Flip',
-          data: topFlips.map(f => f.profit),
-          backgroundColor: 'rgba(76,175,122,0.5)',
-          borderColor: greenColor,
-          borderWidth: 1,
-          borderRadius: 2,
-          yAxisID: 'y2',
-        }
+      datasets:[
+        { label:'GP/Day Potential', data:topFlips.map(f=>f.gpDay), backgroundColor:'rgba(201,162,39,0.6)', borderColor:goldColor, borderWidth:1, borderRadius:2, yAxisID:'y' },
+        { label:'Profit/Flip',      data:topFlips.map(f=>f.profit), backgroundColor:'rgba(76,175,122,0.5)', borderColor:greenColor, borderWidth:1, borderRadius:2, yAxisID:'y2' },
       ]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: true, position: 'top', labels: { boxWidth: 12, font: { size: 11 } } },
-        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${fmtGP(ctx.raw)} gp` } }
-      },
-      scales: {
-        x: { ticks: { maxRotation: 45, font: { size: 10 } }, grid: { color: dimColor } },
-        y: { ticks: { callback: v => fmtGP(v) }, grid: { color: dimColor }, title: { display: true, text: 'GP/Day', color: goldColor, font:{size:10} } },
-        y2: { position: 'right', ticks: { callback: v => fmtGP(v) }, grid: { drawOnChartArea: false }, title: { display: true, text: 'Profit/Flip', color: greenColor, font:{size:10} } },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:true,position:'top',labels:{boxWidth:12,font:{size:11}}},tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtGP(ctx.raw)} gp`}}},
+      scales:{
+        x:{ticks:{maxRotation:45,font:{size:10}},grid:{color:dimColor}},
+        y:{ticks:{callback:v=>fmtGP(v)},grid:{color:dimColor},title:{display:true,text:'GP/Day',color:goldColor,font:{size:10}}},
+        y2:{position:'right',ticks:{callback:v=>fmtGP(v)},grid:{drawOnChartArea:false},title:{display:true,text:'Profit/Flip',color:greenColor,font:{size:10}}},
       }
     }
   });
 
-  // Chart 2: Gem profits
   if (charts.gems) charts.gems.destroy();
   const ctx2 = document.getElementById('chartGems').getContext('2d');
   charts.gems = new Chart(ctx2, {
-    type: 'bar',
-    data: {
+    type:'bar',
+    data:{
       labels: gemData.map(g => g.name),
-      datasets: [
-        {
-          label: 'Buy Cost (uncut)',
-          data: gemData.map(g => g.buyCost),
-          backgroundColor: 'rgba(74,158,202,0.5)',
-          borderColor: '#4a9eca',
-          borderWidth: 1,
-        },
-        {
-          label: 'Sell Price (cut)',
-          data: gemData.map(g => g.sellFor),
-          backgroundColor: 'rgba(76,175,122,0.5)',
-          borderColor: '#4caf7a',
-          borderWidth: 1,
-        }
+      datasets:[
+        { label:'Buy Cost (uncut)', data:gemData.map(g=>g.buyCost), backgroundColor:'rgba(74,158,202,0.5)', borderColor:'#4a9eca', borderWidth:1 },
+        { label:'Sell Price (cut)', data:gemData.map(g=>g.sellFor), backgroundColor:'rgba(76,175,122,0.5)', borderColor:'#4caf7a', borderWidth:1 },
       ]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${fmtGP(ctx.raw)} gp` } }
-      },
-      scales: {
-        x: { grid: { color: dimColor } },
-        y: { ticks: { callback: v => fmtGP(v) }, grid: { color: dimColor }, type: 'logarithmic' }
-      }
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{tooltip:{callbacks:{label:ctx=>`${ctx.dataset.label}: ${fmtGP(ctx.raw)} gp`}}},
+      scales:{x:{grid:{color:dimColor}},y:{ticks:{callback:v=>fmtGP(v)},grid:{color:dimColor},type:'logarithmic'}}
     }
   });
 
-  // Chart 3: Margin vs Volume scatter
   if (charts.scatter) charts.scatter.destroy();
   const ctx3 = document.getElementById('chartScatter').getContext('2d');
   const scatterData = flipData.filter(f => f.volume > 0 && f.margin > 0 && f.margin < 50).slice(0, 60);
   charts.scatter = new Chart(ctx3, {
-    type: 'scatter',
-    data: {
-      datasets: [{
-        label: 'Items',
-        data: scatterData.map(f => ({ x: Math.log10(f.volume+1), y: f.margin, name: f.name, profit: f.profit })),
-        backgroundColor: scatterData.map(f => f.profit > 100000 ? 'rgba(201,162,39,0.8)' : f.profit > 10000 ? 'rgba(76,175,122,0.7)' : 'rgba(74,158,202,0.5)'),
-        pointRadius: 5,
+    type:'scatter',
+    data:{
+      datasets:[{
+        label:'Items',
+        data: scatterData.map(f => ({ x:Math.log10(f.volume+1), y:f.margin, name:f.name, profit:f.profit })),
+        backgroundColor: scatterData.map(f => f.profit>100000?'rgba(201,162,39,0.8)':f.profit>10000?'rgba(76,175,122,0.7)':'rgba(74,158,202,0.5)'),
+        pointRadius:5,
       }]
     },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: ctx => `${ctx.raw.name}: ${ctx.raw.y.toFixed(1)}% margin, ${fmtGP(ctx.raw.profit)} profit`
-          }
-        }
-      },
-      scales: {
-        x: {
-          title: { display: true, text: 'Volume (log scale)', color: '#7a6e5c' },
-          ticks: { callback: v => ['1','10','100','1K','10K','100K','1M'][Math.round(v)] || '' },
-          grid: { color: dimColor }
-        },
-        y: {
-          title: { display: true, text: 'Margin %', color: '#7a6e5c' },
-          ticks: { callback: v => v+'%' },
-          grid: { color: dimColor }
-        }
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>`${ctx.raw.name}: ${ctx.raw.y.toFixed(1)}% margin, ${fmtGP(ctx.raw.profit)} profit`}}},
+      scales:{
+        x:{title:{display:true,text:'Volume (log scale)',color:'#7a6e5c'},ticks:{callback:v=>['1','10','100','1K','10K','100K','1M'][Math.round(v)]||''},grid:{color:dimColor}},
+        y:{title:{display:true,text:'Margin %',color:'#7a6e5c'},ticks:{callback:v=>v+'%'},grid:{color:dimColor}}
       }
     }
   });
@@ -1653,7 +2074,6 @@ window.addEventListener('load', () => {
   log('Note: If CORS blocks live data, realistic mock data will be used', 'warn');
   loadAll();
 
-  // Auto-refresh every 5 minutes
   setInterval(() => {
     log('Auto-refresh triggered (5min interval)', 'info');
     loadAll();
