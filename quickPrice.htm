@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GE Price Oracle — OSRS</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a84c;
+    --gold-light: #f0d060;
+    --gold-dim: #7a6030;
+    --parchment: #1a140a;
+    --bg: #0d0a06;
+    --panel: #130f08;
+    --panel-border: #2e2210;
+    --text: #d4c49a;
+    --text-dim: #7a6e50;
+    --green: #5cb85c;
+    --green-dim: #2d5e2d;
+    --red: #c0392b;
+    --red-dim: #5e2d2d;
+    --blue: #4a9eda;
+    --accent: #e8a020;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Crimson Text', serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgba(180,120,20,0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 80% 60% at 50% 100%, rgba(100,60,10,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Scanline overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px,
+      transparent 3px,
+      rgba(0,0,0,0.03) 3px,
+      rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .header-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 4px;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(28px, 5vw, 52px);
+    font-weight: 900;
+    color: var(--gold-light);
+    letter-spacing: 2px;
+    line-height: 1.1;
+    text-shadow: 0 0 40px rgba(200,160,60,0.3), 0 2px 4px rgba(0,0,0,0.8);
+  }
+
+  .header-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 20px auto;
+    max-width: 400px;
+  }
+
+  .header-divider::before,
+  .header-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+  }
+
+  .diamond {
+    width: 8px;
+    height: 8px;
+    background: var(--gold);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  .header-sub {
+    font-size: 15px;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  /* Controls panel */
+  .controls {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 2px;
+    padding: 24px;
+    margin-bottom: 32px;
+    position: relative;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.6), inset 0 1px 0 rgba(200,160,60,0.1);
+  }
+
+  .controls::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: 20px; right: 20px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+  }
+
+  /* Toggle */
+  .toggle-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .toggle-label {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  .toggle-group {
+    display: flex;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--panel-border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .toggle-btn {
+    padding: 8px 20px;
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    position: relative;
+  }
+
+  .toggle-btn.active {
+    background: rgba(180,130,20,0.15);
+    color: var(--gold-light);
+    box-shadow: inset 0 0 12px rgba(180,130,20,0.1);
+  }
+
+  .toggle-btn:first-child.active::after {
+    content: '';
+    position: absolute;
+    right: 0; top: 20%; bottom: 20%;
+    width: 1px;
+    background: var(--gold-dim);
+  }
+
+  .f2p-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    background: rgba(74, 158, 218, 0.15);
+    border: 1px solid rgba(74, 158, 218, 0.3);
+    color: var(--blue);
+    font-size: 9px;
+    letter-spacing: 1px;
+    font-family: 'Cinzel', serif;
+    border-radius: 1px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  .members-badge {
+    display: inline-block;
+    padding: 1px 6px;
+    background: rgba(201, 168, 76, 0.15);
+    border: 1px solid rgba(201, 168, 76, 0.3);
+    color: var(--gold);
+    font-size: 9px;
+    letter-spacing: 1px;
+    font-family: 'Cinzel', serif;
+    border-radius: 1px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+
+  /* Search */
+  .search-row {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .search-wrapper {
+    flex: 1;
+    position: relative;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 12px 16px 12px 40px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--panel-border);
+    border-radius: 2px;
+    color: var(--text);
+    font-family: 'Crimson Text', serif;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input[type="text"]:focus {
+    border-color: var(--gold-dim);
+    box-shadow: 0 0 0 2px rgba(180,130,20,0.1);
+  }
+
+  input[type="text"]::placeholder {
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  /* Dropdown */
+  .dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0; right: 0;
+    background: #1a1408;
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    max-height: 280px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.8);
+    display: none;
+  }
+
+  .dropdown.visible { display: block; }
+
+  .dropdown::-webkit-scrollbar { width: 6px; }
+  .dropdown::-webkit-scrollbar-track { background: transparent; }
+  .dropdown::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 3px; }
+
+  .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+    border-bottom: 1px solid rgba(46,34,16,0.5);
+  }
+
+  .dropdown-item:last-child { border-bottom: none; }
+  .dropdown-item:hover { background: rgba(180,130,20,0.12); }
+
+  .dropdown-item img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    flex-shrink: 0;
+    image-rendering: pixelated;
+  }
+
+  .dropdown-item-name {
+    font-size: 15px;
+    color: var(--text);
+  }
+
+  .dropdown-item-members {
+    margin-left: auto;
+    font-size: 11px;
+    font-family: 'Cinzel', serif;
+    color: var(--text-dim);
+  }
+
+  /* Loading state */
+  .loading-text {
+    padding: 16px;
+    color: var(--text-dim);
+    font-style: italic;
+    font-size: 14px;
+  }
+
+  /* Results */
+  .results {
+    display: none;
+    animation: fadeUp 0.4s ease forwards;
+  }
+
+  .results.visible { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Item header */
+  .item-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 28px;
+    padding: 20px 24px;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .item-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold-dim), transparent);
+  }
+
+  .item-icon-frame {
+    width: 56px;
+    height: 56px;
+    background: radial-gradient(circle, rgba(180,130,20,0.1), transparent);
+    border: 1px solid var(--gold-dim);
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    image-rendering: pixelated;
+  }
+
+  .item-icon-frame img {
+    max-width: 44px;
+    max-height: 44px;
+    object-fit: contain;
+    image-rendering: pixelated;
+  }
+
+  .item-info h2 {
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--gold-light);
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+  }
+
+  .item-meta {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .meta-pill {
+    font-size: 12px;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 1px;
+    padding: 2px 10px;
+    border-radius: 1px;
+    border: 1px solid;
+  }
+
+  .meta-pill.members {
+    color: var(--gold);
+    border-color: rgba(201,168,76,0.3);
+    background: rgba(201,168,76,0.08);
+  }
+
+  .meta-pill.f2p {
+    color: var(--blue);
+    border-color: rgba(74,158,218,0.3);
+    background: rgba(74,158,218,0.08);
+  }
+
+  .item-id {
+    font-size: 12px;
+    color: var(--text-dim);
+    font-family: 'Cinzel', serif;
+    letter-spacing: 1px;
+  }
+
+  /* Price cards */
+  .price-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 580px) {
+    .price-grid { grid-template-columns: 1fr; }
+  }
+
+  .price-card {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 2px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+
+  .price-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .price-card.instant::before {
+    background: linear-gradient(to right, transparent, var(--green), transparent);
+  }
+
+  .price-card.longterm::before {
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+
+  .price-card-label {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .price-card.instant .price-card-label { color: var(--green); }
+  .price-card.longterm .price-card-label { color: var(--gold); }
+
+  .label-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .instant .label-dot { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .longterm .label-dot { background: var(--gold); box-shadow: 0 0 6px var(--gold); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .price-main {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(22px, 4vw, 32px);
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .price-card.instant .price-main { color: #7cdf7c; }
+  .price-card.longterm .price-main { color: var(--gold-light); }
+
+  .price-sub {
+    font-size: 13px;
+    color: var(--text-dim);
+    font-style: italic;
+    margin-bottom: 16px;
+    line-height: 1.5;
+  }
+
+  .price-breakdown {
+    border-top: 1px solid var(--panel-border);
+    padding-top: 14px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .breakdown-item label {
+    display: block;
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+
+  .breakdown-item span {
+    font-size: 14px;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* Tax info */
+  .tax-note {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid var(--panel-border);
+    border-left: 2px solid var(--gold-dim);
+    border-radius: 2px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .tax-note-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .tax-note-text {
+    font-size: 14px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+
+  .tax-note-text strong { color: var(--text); }
+
+  /* Volume/trend row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 480px) {
+    .stats-row { grid-template-columns: 1fr 1fr; }
+  }
+
+  .stat-box {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 2px;
+    padding: 16px;
+    text-align: center;
+  }
+
+  .stat-box-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .stat-box-value {
+    font-family: 'Cinzel', serif;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .stat-box-value.up { color: var(--green); }
+  .stat-box-value.down { color: var(--red); }
+  .stat-box-value.neutral { color: var(--text); }
+  .stat-box-value.gold { color: var(--gold-light); }
+
+  /* Verdict */
+  .verdict {
+    border: 1px solid;
+    border-radius: 2px;
+    padding: 18px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .verdict::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0.05;
+    pointer-events: none;
+  }
+
+  .verdict.bullish {
+    border-color: rgba(92, 184, 92, 0.4);
+    background: rgba(92, 184, 92, 0.06);
+  }
+
+  .verdict.bearish {
+    border-color: rgba(192, 57, 43, 0.4);
+    background: rgba(192, 57, 43, 0.06);
+  }
+
+  .verdict.neutral {
+    border-color: rgba(201, 168, 76, 0.4);
+    background: rgba(201, 168, 76, 0.06);
+  }
+
+  .verdict-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  .verdict-title {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .verdict.bullish .verdict-title { color: var(--green); }
+  .verdict.bearish .verdict-title { color: var(--red); }
+  .verdict.neutral .verdict-title { color: var(--gold); }
+
+  .verdict-text {
+    font-size: 15px;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* Error state */
+  .error-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-dim);
+    font-style: italic;
+    font-size: 16px;
+    display: none;
+  }
+
+  .error-state.visible { display: block; }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 64px 24px;
+    color: var(--text-dim);
+  }
+
+  .empty-state-rune {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.3;
+  }
+
+  .empty-state-text {
+    font-family: 'Cinzel', serif;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* Spinner */
+  .spinner {
+    display: none;
+    text-align: center;
+    padding: 48px;
+  }
+
+  .spinner.visible { display: block; }
+
+  .spinner-ring {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--panel-border);
+    border-top-color: var(--gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    display: inline-block;
+    margin-bottom: 16px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .spinner-text {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    margin-top: 56px;
+    padding-top: 24px;
+    border-top: 1px solid var(--panel-border);
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+
+  .footer a { color: var(--gold-dim); text-decoration: none; }
+
+  /* Highlight number */
+  .gp { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="header">
+    <div class="header-eyebrow">Grand Exchange</div>
+    <h1>Price Oracle</h1>
+    <div class="header-divider"><div class="diamond"></div></div>
+    <p class="header-sub">Consult the runes before you sell your wares</p>
+  </header>
+
+  <div class="controls">
+    <div class="toggle-row">
+      <span class="toggle-label">Mode</span>
+      <div class="toggle-group">
+        <button class="toggle-btn active" id="btn-all" onclick="setFilter('all')">All Items</button>
+        <button class="toggle-btn" id="btn-f2p" onclick="setFilter('f2p')">F2P <span class="f2p-badge">FREE</span></button>
+        <button class="toggle-btn" id="btn-members" onclick="setFilter('members')">Members <span class="members-badge">P2P</span></button>
+      </div>
+    </div>
+
+    <div class="search-row">
+      <div class="search-wrapper">
+        <span class="search-icon">⚔</span>
+        <input type="text" id="search-input" placeholder="Search for an item… e.g. Dragon scimitar" autocomplete="off" />
+        <div class="dropdown" id="dropdown"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" id="empty-state">
+    <div class="empty-state-rune">🔮</div>
+    <div class="empty-state-text">Search for an item to reveal its market value</div>
+  </div>
+
+  <div class="spinner" id="spinner">
+    <div class="spinner-ring"></div>
+    <div class="spinner-text">Consulting the Oracle…</div>
+  </div>
+
+  <div class="error-state" id="error-state">
+    The spirits could not retrieve price data. Please try again.
+  </div>
+
+  <div class="results" id="results"></div>
+
+</div>
+
+<div class="footer">
+  Data sourced from the <a href="https://prices.runescape.wiki" target="_blank">OSRS Wiki Prices API</a> &amp; <a href="https://runescape.wiki/w/RuneScape_Wiki" target="_blank">OSRS GE API</a><br>
+  Prices update every ~5 minutes · GE tax applies to items over 100 gp
+</div>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+let allItems = {};         // id -> {name, members, icon?}
+let currentFilter = 'all';
+let searchTimeout = null;
+let latestPrices = {};     // id -> {high, low, highTime, lowTime}
+let timeSeries = {};       // id -> 24h / 7d average data
+
+// ── OSRS Wiki API base URLs ────────────────────────────────────────────────
+const WIKI_BASE = 'https://prices.runescape.wiki/api/v1/osrs';
+const GE_ICON_BASE = 'https://secure.runescape.com/m=itemdb_oldschool/obj_sprite.gif?id=';
+const WIKI_ICON_BASE = 'https://oldschool.runescape.wiki/images/';
+
+// ── Fetch the item mapping ─────────────────────────────────────────────────
+async function loadItemMapping() {
+  try {
+    const res = await fetch(`${WIKI_BASE}/mapping`, {
+      headers: { 'User-Agent': 'OSRS Price Oracle - Player Tool' }
+    });
+    const data = await res.json();
+    allItems = {};
+    for (const item of data) {
+      allItems[item.id] = {
+        name: item.name,
+        members: item.members,
+        examine: item.examine || '',
+        limit: item.limit || null,
+        lowalch: item.lowalch || null,
+        highalch: item.highalch || null,
+        value: item.value || null,
+      };
+    }
+  } catch (e) {
+    console.error('Failed to load item mapping', e);
+  }
+}
+
+// ── Fetch latest prices ────────────────────────────────────────────────────
+async function fetchLatestPrices() {
+  try {
+    const res = await fetch(`${WIKI_BASE}/latest`, {
+      headers: { 'User-Agent': 'OSRS Price Oracle - Player Tool' }
+    });
+    const json = await res.json();
+    latestPrices = json.data || {};
+  } catch (e) {
+    console.error('Failed to fetch latest prices', e);
+  }
+}
+
+// ── Fetch 5-min time series (recent trend) ────────────────────────────────
+async function fetch5mSeries(itemId) {
+  try {
+    const res = await fetch(`${WIKI_BASE}/timeseries?timestep=5m&id=${itemId}`, {
+      headers: { 'User-Agent': 'OSRS Price Oracle - Player Tool' }
+    });
+    const json = await res.json();
+    return json.data || [];
+  } catch (e) { return []; }
+}
+
+// ── Fetch 1h timeseries for 7d averages ──────────────────────────────────
+async function fetch1hSeries(itemId) {
+  try {
+    const res = await fetch(`${WIKI_BASE}/timeseries?timestep=1h&id=${itemId}`, {
+      headers: { 'User-Agent': 'OSRS Price Oracle - Player Tool' }
+    });
+    const json = await res.json();
+    return json.data || [];
+  } catch (e) { return []; }
+}
+
+// ── Filter helpers ─────────────────────────────────────────────────────────
+function itemMatchesFilter(id) {
+  const item = allItems[id];
+  if (!item) return false;
+  if (currentFilter === 'f2p') return !item.members;
+  if (currentFilter === 'members') return item.members;
+  return true;
+}
+
+function setFilter(filter) {
+  currentFilter = filter;
+  ['all','f2p','members'].forEach(f => {
+    document.getElementById(`btn-${f}`).classList.toggle('active', f === filter);
+  });
+  const query = document.getElementById('search-input').value.trim();
+  if (query.length >= 2) performSearch(query);
+}
+
+// ── Search ─────────────────────────────────────────────────────────────────
+function performSearch(query) {
+  const dd = document.getElementById('dropdown');
+  const lower = query.toLowerCase();
+
+  const matches = Object.entries(allItems)
+    .filter(([id, item]) => item.name.toLowerCase().includes(lower) && itemMatchesFilter(id))
+    .sort((a, b) => {
+      // Exact match first, then starts-with, then includes
+      const an = a[1].name.toLowerCase();
+      const bn = b[1].name.toLowerCase();
+      if (an === lower && bn !== lower) return -1;
+      if (bn === lower && an !== lower) return 1;
+      if (an.startsWith(lower) && !bn.startsWith(lower)) return -1;
+      if (bn.startsWith(lower) && !an.startsWith(lower)) return 1;
+      return an.localeCompare(bn);
+    })
+    .slice(0, 20);
+
+  if (matches.length === 0) {
+    dd.innerHTML = '<div class="loading-text">No items found</div>';
+    dd.classList.add('visible');
+    return;
+  }
+
+  dd.innerHTML = matches.map(([id, item]) => `
+    <div class="dropdown-item" onclick="selectItem(${id})">
+      <img src="${GE_ICON_BASE}${id}" alt="" onerror="this.style.display='none'">
+      <span class="dropdown-item-name">${item.name}</span>
+      <span class="dropdown-item-members">${item.members ? '🔰 P2P' : ''}</span>
+    </div>
+  `).join('');
+  dd.classList.add('visible');
+}
+
+document.getElementById('search-input').addEventListener('input', (e) => {
+  clearTimeout(searchTimeout);
+  const q = e.target.value.trim();
+  if (q.length < 2) {
+    document.getElementById('dropdown').classList.remove('visible');
+    return;
+  }
+  searchTimeout = setTimeout(() => performSearch(q), 180);
+});
+
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search-wrapper')) {
+    document.getElementById('dropdown').classList.remove('visible');
+  }
+});
+
+// ── Select item & render ───────────────────────────────────────────────────
+async function selectItem(id) {
+  document.getElementById('dropdown').classList.remove('visible');
+  document.getElementById('search-input').value = allItems[id]?.name || '';
+  document.getElementById('empty-state').style.display = 'none';
+  document.getElementById('results').classList.remove('visible');
+  document.getElementById('error-state').classList.remove('visible');
+  document.getElementById('spinner').classList.add('visible');
+
+  try {
+    await fetchLatestPrices();
+    const [series5m, series1h] = await Promise.all([
+      fetch5mSeries(id),
+      fetch1hSeries(id),
+    ]);
+    renderItem(id, series5m, series1h);
+  } catch (e) {
+    document.getElementById('spinner').classList.remove('visible');
+    document.getElementById('error-state').classList.add('visible');
+  }
+}
+
+// ── Number formatting ──────────────────────────────────────────────────────
+function fmt(n) {
+  if (n == null || isNaN(n)) return '—';
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(2) + 'M';
+  if (n >= 1_000) return (n / 1_000).toFixed(1) + 'k';
+  return n.toLocaleString();
+}
+
+function fmtFull(n) {
+  if (n == null || isNaN(n)) return '—';
+  return n.toLocaleString() + ' gp';
+}
+
+function pct(a, b) {
+  if (!a || !b) return null;
+  return ((a - b) / b * 100).toFixed(1);
+}
+
+// ── Calculate averages from series ────────────────────────────────────────
+function calcAverages(series, hours) {
+  if (!series || series.length === 0) return null;
+  const cutoff = Date.now() / 1000 - hours * 3600;
+  const recent = series.filter(p => p.timestamp >= cutoff);
+  if (recent.length === 0) return null;
+
+  const avgHighs = recent.filter(p => p.avgHighPrice).map(p => p.avgHighPrice);
+  const avgLows = recent.filter(p => p.avgLowPrice).map(p => p.avgLowPrice);
+  const volumes = recent.map(p => (p.highPriceVolume || 0) + (p.lowPriceVolume || 0));
+
+  const avgHigh = avgHighs.length ? Math.round(avgHighs.reduce((a,b) => a+b, 0) / avgHighs.length) : null;
+  const avgLow = avgLows.length ? Math.round(avgLows.reduce((a,b) => a+b, 0) / avgLows.length) : null;
+  const totalVol = volumes.reduce((a,b) => a+b, 0);
+
+  return { avgHigh, avgLow, totalVol };
+}
+
+// ── Apply GE tax (1%, max 5M) ──────────────────────────────────────────────
+function afterTax(price) {
+  if (!price || price <= 100) return price;
+  const tax = Math.min(Math.floor(price * 0.01), 5_000_000);
+  return price - tax;
+}
+
+// ── Render ─────────────────────────────────────────────────────────────────
+function renderItem(id, series5m, series1h) {
+  const item = allItems[id];
+  const prices = latestPrices[id];
+  const spinner = document.getElementById('spinner');
+  const results = document.getElementById('results');
+
+  spinner.classList.remove('visible');
+
+  if (!prices) {
+    document.getElementById('error-state').classList.add('visible');
+    return;
+  }
+
+  const { high, low, highTime, lowTime } = prices;
+
+  // Instant sell = insta-buy price from buyers (the "low" price on wiki = what you'd sell for instantly)
+  const instantSell = low;
+  const instantSellAfterTax = afterTax(instantSell);
+
+  // 24h and 7d averages
+  const avg24h = calcAverages(series1h, 24);
+  const avg7d = calcAverages(series1h, 168);
+
+  // Long term sell recommendation: based on avg low prices over 7 days
+  // Recommend listing slightly above 7d average low but below average high
+  let longTermSell = null;
+  let longTermSource = '';
+  if (avg7d?.avgHigh && avg7d?.avgLow) {
+    // Sweet spot: 60% between avg low and avg high
+    longTermSell = Math.round(avg7d.avgLow + (avg7d.avgHigh - avg7d.avgLow) * 0.6);
+    longTermSource = '7-day weighted average';
+  } else if (avg24h?.avgHigh && avg24h?.avgLow) {
+    longTermSell = Math.round(avg24h.avgLow + (avg24h.avgHigh - avg24h.avgLow) * 0.6);
+    longTermSource = '24-hour weighted average';
+  } else if (high && low) {
+    longTermSell = Math.round(low + (high - low) * 0.5);
+    longTermSource = 'current spread midpoint';
+  }
+
+  const longTermAfterTax = afterTax(longTermSell);
+
+  // Spread
+  const spread = high && low ? high - low : null;
+  const spreadPct = high && low ? ((spread / low) * 100).toFixed(1) : null;
+
+  // Price trend
+  let trend = 'neutral', trendText = 'Stable', trendClass = 'neutral';
+  if (avg24h && avg7d && avg7d.avgHigh && avg24h.avgHigh) {
+    const delta = pct(avg24h.avgHigh, avg7d.avgHigh);
+    if (delta > 3) { trend = 'up'; trendText = `+${delta}% (7d)`; trendClass = 'up'; }
+    else if (delta < -3) { trend = 'down'; trendText = `${delta}% (7d)`; trendClass = 'down'; }
+    else { trendText = `${delta > 0 ? '+' : ''}${delta}% (7d)`; trendClass = 'neutral'; }
+  }
+
+  // Verdict
+  let verdictClass, verdictIcon, verdictTitle, verdictMsg;
+  const instantVsLong = longTermSell && instantSell ? pct(longTermSell, instantSell) : null;
+  if (instantVsLong !== null) {
+    if (parseFloat(instantVsLong) > 10) {
+      verdictClass = 'bullish'; verdictIcon = '📈';
+      verdictTitle = 'List for Long-Term';
+      verdictMsg = `Patience pays off here — the long-term price is ~${instantVsLong}% higher than instant sell. Consider listing at <strong>${fmt(longTermSell)} gp</strong> and waiting up to 24 hours for a buyer.`;
+    } else if (parseFloat(instantVsLong) < 3) {
+      verdictClass = 'neutral'; verdictIcon = '⚖️';
+      verdictTitle = 'Sell Instantly';
+      verdictMsg = `The difference between instant and long-term sell is minimal. Sell instantly at <strong>${fmt(instantSell)} gp</strong> to avoid the wait.`;
+    } else {
+      verdictClass = 'neutral'; verdictIcon = '🔮';
+      verdictTitle = 'Your Choice';
+      verdictMsg = `Modest ~${instantVsLong}% premium for waiting. List at <strong>${fmt(longTermSell)} gp</strong> for a likely sale within 24h, or sell at <strong>${fmt(instantSell)} gp</strong> immediately.`;
+    }
+  } else {
+    verdictClass = 'neutral'; verdictIcon = '🔮';
+    verdictTitle = 'Limited Data';
+    verdictMsg = `Insufficient historical data. Use the current price spread as a guide.`;
+  }
+
+  // Volume per hour (24h average)
+  const volPerHour = avg24h?.totalVol ? Math.round(avg24h.totalVol / 24) : null;
+
+  const timeAgo = (ts) => {
+    if (!ts) return '—';
+    const s = Math.floor(Date.now() / 1000 - ts);
+    if (s < 60) return `${s}s ago`;
+    if (s < 3600) return `${Math.floor(s/60)}m ago`;
+    return `${Math.floor(s/3600)}h ago`;
+  };
+
+  results.innerHTML = `
+    <div class="item-header">
+      <div class="item-icon-frame">
+        <img src="${GE_ICON_BASE}${id}" alt="${item.name}" onerror="this.style.display='none'">
+      </div>
+      <div class="item-info">
+        <h2>${item.name}</h2>
+        <div class="item-meta">
+          <span class="meta-pill ${item.members ? 'members' : 'f2p'}">${item.members ? '🔰 Members' : '🆓 Free to Play'}</span>
+          <span class="item-id">ID: ${id}</span>
+          ${item.limit ? `<span class="item-id">Limit: ${item.limit.toLocaleString()}/4h</span>` : ''}
+        </div>
+      </div>
+    </div>
+
+    <div class="price-grid">
+      <div class="price-card instant">
+        <div class="price-card-label"><span class="label-dot"></span>Instant Sell</div>
+        <div class="price-main">${fmt(instantSell)} <span style="font-size:14px;font-weight:400;color:var(--text-dim)">gp</span></div>
+        <div class="price-sub">Sell immediately — buyers are offering this right now${highTime ? `<br>Last trade: ${timeAgo(lowTime)}` : ''}</div>
+        <div class="price-breakdown">
+          <div class="breakdown-item">
+            <label>After GE Tax</label>
+            <span class="gp">${fmt(instantSellAfterTax)} gp</span>
+          </div>
+          <div class="breakdown-item">
+            <label>Current Buy Wall</label>
+            <span>${fmt(high)} gp</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="price-card longterm">
+        <div class="price-card-label"><span class="label-dot"></span>Long-Term Sell</div>
+        <div class="price-main">${fmt(longTermSell)} <span style="font-size:14px;font-weight:400;color:var(--text-dim)">gp</span></div>
+        <div class="price-sub">Recommended listing price for a sale within ~24 hours<br><em style="font-size:12px">(based on ${longTermSource})</em></div>
+        <div class="price-breakdown">
+          <div class="breakdown-item">
+            <label>After GE Tax</label>
+            <span class="gp">${fmt(longTermAfterTax)} gp</span>
+          </div>
+          <div class="breakdown-item">
+            <label>Premium vs Instant</label>
+            <span style="color: ${instantVsLong > 0 ? 'var(--green)' : 'var(--text-dim)'}">+${instantVsLong ?? 0}%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-box-label">Price Trend (7d)</div>
+        <div class="stat-box-value ${trendClass}">${trendText}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-label">Spread</div>
+        <div class="stat-box-value gold">${spread ? fmt(spread) + ' gp' : '—'}${spreadPct ? `<br><span style="font-size:12px;color:var(--text-dim)">${spreadPct}%</span>` : ''}</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-label">Vol / Hour (24h avg)</div>
+        <div class="stat-box-value neutral">${volPerHour ? fmt(volPerHour) : '—'}</div>
+      </div>
+    </div>
+
+    ${item.highalch ? `
+    <div class="tax-note">
+      <div class="tax-note-icon">🔥</div>
+      <div class="tax-note-text">
+        <strong>High Alchemy:</strong> ${fmtFull(item.highalch)} &nbsp;|&nbsp;
+        <strong>Low Alchemy:</strong> ${fmtFull(item.lowalch)} &nbsp;|&nbsp;
+        <strong>Store Value:</strong> ${fmtFull(item.value)}
+        ${instantSell && item.highalch > instantSellAfterTax ? ' &nbsp;— <em>Alching may yield better returns than GE selling!</em>' : ''}
+      </div>
+    </div>
+    ` : ''}
+
+    <div class="verdict ${verdictClass}">
+      <div class="verdict-icon">${verdictIcon}</div>
+      <div>
+        <div class="verdict-title">${verdictTitle}</div>
+        <div class="verdict-text">${verdictMsg}</div>
+      </div>
+    </div>
+  `;
+
+  results.classList.add('visible');
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+(async () => {
+  await loadItemMapping();
+  document.getElementById('search-input').placeholder = `Search ${Object.keys(allItems).length.toLocaleString()} items…`;
+})();
+</script>
+</body>
+</html>
